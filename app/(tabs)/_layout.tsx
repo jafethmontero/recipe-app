@@ -35,7 +35,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
@@ -43,7 +43,7 @@ export default function TabLayout() {
               name="home"
               color={color}
               focused={true}
-              icon={require("../../assets/images/002-chef.png")}
+              icon={require("../../assets/icons/002-chef.png")}
             />
           ),
         }}
@@ -57,7 +57,7 @@ export default function TabLayout() {
               name="search"
               color={color}
               focused={true}
-              icon={require("../../assets/images/001-search.png")}
+              icon={require("../../assets/icons/001-search.png")}
             />
           ),
         }}
@@ -71,7 +71,7 @@ export default function TabLayout() {
               name="create"
               color={color}
               focused={true}
-              icon={require("../../assets/images/001-plus.png")}
+              icon={require("../../assets/icons/001-plus.png")}
             />
           ),
         }}
@@ -85,7 +85,7 @@ export default function TabLayout() {
               name="bookmark"
               color={color}
               focused={true}
-              icon={require("../../assets/images/005-save-instagram.png")}
+              icon={require("../../assets/icons/005-save-instagram.png")}
             />
           ),
         }}
@@ -99,7 +99,7 @@ export default function TabLayout() {
               name="account"
               color={color}
               focused={true}
-              icon={require("../../assets/images/004-user.png")}
+              icon={require("../../assets/icons/004-user.png")}
             />
           ),
         }}
