@@ -8,6 +8,12 @@ module.exports = {
         secondary: "#F9A826",
         danger: "#e3342f",
       },
+      fontFamily: {
+        smregular: ["SpaceMono-Regular", "sans-serif"],
+        roboregular: ["Roboto-Regular", "sans-serif"],
+        robobold: ["Roboto-Bold", "sans-serif"],
+        robolight: ["Roboto-Light", "sans-serif"],
+      },
     },
   },
   plugins: [],

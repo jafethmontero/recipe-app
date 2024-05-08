@@ -1,4 +1,3 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -19,8 +18,19 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
+    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "Roboto-ThinItalic": require("../assets/fonts/Roboto-ThinItalic.ttf"),
+    "Roboto-Thin": require("../assets/fonts/Roboto-Thin.ttf"),
+    "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
+    "Roboto-MediumItalic": require("../assets/fonts/Roboto-MediumItalic.ttf"),
+    "Roboto-Medium": require("../assets/fonts/Roboto-Medium.ttf"),
+    "Roboto-Light": require("../assets/fonts/Roboto-Light.ttf"),
+    "Roboto-LightItalic": require("../assets/fonts/Roboto-LightItalic.ttf"),
+    "Roboto-Italic": require("../assets/fonts/Roboto-Italic.ttf"),
+    "Roboto-BoldItalic": require("../assets/fonts/Roboto-BoldItalic.ttf"),
+    "Roboto-Bold": require("../assets/fonts/Roboto-Bold.ttf"),
+    "Roboto-Black": require("../assets/fonts/Roboto-Black.ttf"),
+    "Roboto-BlackItalic": require("../assets/fonts/Roboto-BlackItalic.ttf"),
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.

@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "recipe-app",
-    "slug": "recipe-app",
+    "name": "biteBuddies",
+    "slug": "biteBuddies",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F9A826"
     },
     "assetBundlePatterns": [
       "**/*"

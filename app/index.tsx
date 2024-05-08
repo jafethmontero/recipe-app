@@ -15,7 +15,7 @@ const Onboarding = () => {
               resizeMode="contain"
               style={{ tintColor: "#F9A826" }}
             />
-            <Text className="text-3xl font-bold">BiteBuddies</Text>
+            <Text className="text-3xl font-robobold">BiteBuddies</Text>
           </View>
           <Image
             source={require("../assets/images/onboarding.png")}
@@ -23,10 +23,10 @@ const Onboarding = () => {
             resizeMode="contain"
           />
           <View className="relative mt-5">
-            <Text className="text-2xl font-bold text-center">
+            <Text className="text-2xl text-center font-roboregular">
               Share the taste, share the love!
             </Text>
-            <Text className="text-center text-sm">
+            <Text className="text-center text-sm font-robolight">
               Discover new flavors every day. Share your favorite recipes with
               friends and family, all in one place!
             </Text>

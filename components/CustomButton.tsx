@@ -16,7 +16,7 @@ const CustomButton = ({
       activeOpacity={0.7}
       onPress={handlePress}
     >
-      <Text className="text-white text-lg">{title}</Text>
+      <Text className="text-white text-lg font-robobold">{title}</Text>
     </TouchableOpacity>
   );
 };
