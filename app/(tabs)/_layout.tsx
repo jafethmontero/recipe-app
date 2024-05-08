@@ -1,23 +1,34 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import React from "react";
 
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import Colors from "@/constants/Colors";
+import { Image, ImageSourcePropType } from "react-native";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+const Icon = ({
+  icon,
+  color,
+}: {
+  name: string;
   color: string;
-}) {
-  return <FontAwesome size={20} style={{ marginBottom: -3 }} {...props} />;
-}
+  focused: boolean;
+  icon: ImageSourcePropType;
+}) => {
+  return (
+    <Image
+      source={icon}
+      resizeMode="contain"
+      tintColor={color}
+      className="w-6 h-6"
+    />
+  );
+};
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors["light"].tint,
+        tabBarActiveTintColor: "#F9A826",
+        tabBarInactiveTintColor: "#d1d5db",
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -27,29 +38,55 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="coffee" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="home"
+              color={color}
+              focused={true}
+              icon={require("../../assets/images/002-chef.png")}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: "Search",
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="search"
+              color={color}
+              focused={true}
+              icon={require("../../assets/images/001-search.png")}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
-          title: "Create",
-          tabBarIcon: ({ color }) => <TabBarIcon name="plus" color={color} />,
+          title: "Post",
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="create"
+              color={color}
+              focused={true}
+              icon={require("../../assets/images/001-plus.png")}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="bookmark"
         options={{
-          title: "Bookmark",
+          title: "Saved",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="bookmark" color={color} />
+            <Icon
+              name="bookmark"
+              color={color}
+              focused={true}
+              icon={require("../../assets/images/005-save-instagram.png")}
+            />
           ),
         }}
       />
@@ -57,7 +94,14 @@ export default function TabLayout() {
         name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="account"
+              color={color}
+              focused={true}
+              icon={require("../../assets/images/004-user.png")}
+            />
+          ),
         }}
       />
     </Tabs>
