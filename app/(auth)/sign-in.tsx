@@ -1,7 +1,7 @@
 import CustomButton from "@/components/CustomButton";
 import FormField from "@/components/FormField";
 import Logo from "@/components/Logo";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,16 +10,18 @@ const SignIn = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
+      password: "",
     },
+    mode: "onBlur",
   });
-  const onSubmit = (data: { firstName: string; lastName: string }) =>
+  const onSubmit = (data: { email: string; password: string }) => {
     console.log(data);
+    router.push("/home");
+  };
 
   return (
     <SafeAreaView className="h-full">
@@ -32,6 +34,10 @@ const SignIn = () => {
             label="Email"
             styles="mt-4"
             textContentType="emailAddress"
+            rules={{
+              required: { value: true, message: "Email is required" },
+              maxLength: { value: 50, message: "Max length = 50" },
+            }}
           />
           <FormField
             name="password"
@@ -39,11 +45,16 @@ const SignIn = () => {
             label="Password"
             styles="mt-4"
             textContentType="password"
+            rules={{
+              required: { value: true, message: "Password is required" },
+              maxLength: { value: 50, message: "Max length = 50" },
+            }}
           />
           <CustomButton
             title="Login"
             containerStyles="w-full mt-7"
-            handlePress={() => {}}
+            handlePress={handleSubmit(onSubmit)}
+            disabled={!isValid}
           />
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">

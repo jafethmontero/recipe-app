@@ -5,16 +5,21 @@ const CustomButton = ({
   title,
   containerStyles,
   handlePress,
+  disabled,
 }: {
   title: string;
   containerStyles?: string;
   handlePress: () => void;
+  disabled?: boolean;
 }) => {
   return (
     <TouchableOpacity
-      className={`bg-secondary rounded-xl justify-center items-center min-h-[62px] ${containerStyles}`}
+      className={`${
+        disabled ? "opacity-50" : ""
+      } bg-secondary rounded-xl justify-center items-center min-h-[62px] ${containerStyles}`}
       activeOpacity={0.7}
       onPress={handlePress}
+      disabled={disabled}
     >
       <Text className="text-white text-lg font-robobold">{title}</Text>
     </TouchableOpacity>
