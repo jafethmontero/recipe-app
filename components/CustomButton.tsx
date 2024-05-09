@@ -1,21 +1,19 @@
-import { Text, TouchableOpacity } from "react-native";
-import React from "react";
+import { Text, TouchableOpacity } from 'react-native';
+import React from 'react';
 
-const CustomButton = ({
-  title,
-  containerStyles,
-  handlePress,
-  disabled,
-}: {
+interface CustomButtonProps {
   title: string;
   containerStyles?: string;
   handlePress: () => void;
   disabled?: boolean;
-}) => {
+}
+
+const CustomButton: React.FC<CustomButtonProps> = (props) => {
+  const { title, containerStyles, handlePress, disabled } = props;
   return (
     <TouchableOpacity
       className={`${
-        disabled ? "opacity-50" : ""
+        disabled ? 'opacity-50' : ''
       } bg-secondary rounded-xl justify-center items-center min-h-[62px] ${containerStyles}`}
       activeOpacity={0.7}
       onPress={handlePress}

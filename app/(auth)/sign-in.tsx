@@ -6,19 +6,25 @@ import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+interface SignInForm {
+  email: string;
+  password: string;
+}
+
 const SignIn = () => {
   const {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm({
+  } = useForm<SignInForm>({
     defaultValues: {
       email: '',
       password: '',
     },
     mode: 'onBlur',
   });
-  const onSubmit = (data: { email: string; password: string }) => {
+
+  const onSubmit = (data: SignInForm) => {
     console.log(data);
     router.push('/home');
   };
@@ -37,6 +43,7 @@ const SignIn = () => {
             rules={{
               required: { value: true, message: 'Email is required' },
               maxLength: { value: 50, message: 'Max length = 50' },
+              pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Invalid email' },
             }}
           />
           <FormField
