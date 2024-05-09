@@ -1,34 +1,34 @@
-import { Tabs } from "expo-router";
-import React from "react";
+import { Tabs } from 'expo-router';
+import React from 'react';
 
-import { useClientOnlyValue } from "@/hooks/useClientOnlyValue";
-import { Image, ImageSourcePropType } from "react-native";
+import { useClientOnlyValue } from '@/hooks/useClientOnlyValue';
+import { Image, ImageSourcePropType, View, Text } from 'react-native';
 
-const Icon = ({
-  icon,
-  color,
-}: {
-  name: string;
-  color: string;
-  focused: boolean;
+interface TabIconProps {
   icon: ImageSourcePropType;
-}) => {
+  color: string;
+  name: string;
+  focused: boolean;
+}
+
+const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
   return (
-    <Image
-      source={icon}
-      resizeMode="contain"
-      tintColor={color}
-      className="w-6 h-6"
-    />
+    <View className="justify-center items-center gap-1">
+      <Image source={icon} resizeMode="contain" tintColor={color} className="w-6 h-6" />
+      <Text className={`${focused ? 'font-robobold text-secondary' : 'font-roboregular text-gray'} text-xs`}>
+        {name}
+      </Text>
+    </View>
   );
 };
 
-export default function TabLayout() {
+const TabLayout: React.FC = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#F9A826",
-        tabBarInactiveTintColor: "#d1d5db",
+        tabBarActiveTintColor: '#F9A826',
+        tabBarInactiveTintColor: '#d1d5db',
+        tabBarShowLabel: false,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, false),
@@ -37,13 +37,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="home"
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="Home"
               color={color}
-              focused={true}
-              icon={require("../../assets/icons/002-chef.png")}
+              focused={focused}
+              icon={require('../../assets/icons/002-chef.png')}
             />
           ),
         }}
@@ -51,13 +51,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: "Search",
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="search"
+          title: 'Search',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="Search"
               color={color}
-              focused={true}
-              icon={require("../../assets/icons/001-search.png")}
+              focused={focused}
+              icon={require('../../assets/icons/001-search.png')}
             />
           ),
         }}
@@ -65,13 +65,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="create"
         options={{
-          title: "Post",
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="create"
+          title: 'Post',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="Post"
               color={color}
-              focused={true}
-              icon={require("../../assets/icons/001-plus.png")}
+              focused={focused}
+              icon={require('../../assets/icons/001-plus.png')}
             />
           ),
         }}
@@ -79,13 +79,13 @@ export default function TabLayout() {
       <Tabs.Screen
         name="bookmark"
         options={{
-          title: "Saved",
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="bookmark"
+          title: 'Saved',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="Saved"
               color={color}
-              focused={true}
-              icon={require("../../assets/icons/005-save-instagram.png")}
+              focused={focused}
+              icon={require('../../assets/icons/005-save-instagram.png')}
             />
           ),
         }}
@@ -93,17 +93,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name="account"
         options={{
-          title: "Account",
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="account"
+          title: 'Account',
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon
+              name="Account"
               color={color}
-              focused={true}
-              icon={require("../../assets/icons/004-user.png")}
+              focused={focused}
+              icon={require('../../assets/icons/004-user.png')}
             />
           ),
         }}
       />
     </Tabs>
   );
-}
+};
+
+export default TabLayout;

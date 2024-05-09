@@ -60,14 +60,18 @@ const FormField: React.FC<FormFieldProps> = (props) => {
               {textContentType === 'password' ? (
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   <Image
-                    source={showPassword ? require('../assets/icons/view.png') : require('../assets/icons/hide.png')}
+                    source={
+                      showPassword ? require('../assets/icons/view.png') : require('../assets/icons/hide.png')
+                    }
                     className="w-5 h-5"
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
               ) : null}
             </View>
-            {errors[name] ? <Text className="text-red-500 mt-1 pl-2">{getFieldError(errors, name)}</Text> : null}
+            {errors[name] ? (
+              <Text className="text-red-500 mt-1 pl-2">{getFieldError(errors, name)}</Text>
+            ) : null}
           </View>
         )}
       />

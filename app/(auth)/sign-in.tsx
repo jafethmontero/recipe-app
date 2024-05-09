@@ -11,7 +11,7 @@ interface SignInForm {
   password: string;
 }
 
-const SignIn = () => {
+const SignIn: React.FC = () => {
   const {
     control,
     handleSubmit,

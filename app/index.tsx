@@ -18,10 +18,15 @@ const Onboarding = () => {
           <View className="relative mt-5">
             <Text className="text-2xl text-center font-roboregular">Share the taste, share the love!</Text>
             <Text className="text-center text-sm font-robolight">
-              Discover new flavors every day. Share your favorite recipes with friends and family, all in one place!
+              Discover new flavors every day. Share your favorite recipes with friends and family, all in one
+              place!
             </Text>
           </View>
-          <CustomButton title="Get Started" containerStyles="w-full mt-7" handlePress={() => router.push('/sign-in')} />
+          <CustomButton
+            title="Get Started"
+            containerStyles="w-full mt-7"
+            handlePress={() => router.push('/sign-in')}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

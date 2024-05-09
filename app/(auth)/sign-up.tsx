@@ -1,25 +1,30 @@
-import CustomButton from "@/components/CustomButton";
-import FormField from "@/components/FormField";
-import Logo from "@/components/Logo";
-import { Link } from "expo-router";
-import { useForm } from "react-hook-form";
-import { ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import CustomButton from '@/components/CustomButton';
+import FormField from '@/components/FormField';
+import Logo from '@/components/Logo';
+import { Link } from 'expo-router';
+import { useForm } from 'react-hook-form';
+import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const SignUp = () => {
+interface SignUpForm {
+  username: string;
+  email: string;
+  password: string;
+}
+
+const SignUp: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm({
+    formState: { isValid },
+  } = useForm<SignUpForm>({
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
+      username: '',
+      email: '',
+      password: '',
     },
   });
-  const onSubmit = (data: { firstName: string; lastName: string }) =>
-    console.log(data);
+  const onSubmit = (data: SignUpForm) => console.log(data);
 
   return (
     <SafeAreaView className="h-full">
@@ -32,6 +37,10 @@ const SignUp = () => {
             label="Username"
             styles="mt-4"
             textContentType="username"
+            rules={{
+              required: { value: true, message: 'Password is required' },
+              maxLength: { value: 50, message: 'Max length = 50' },
+            }}
           />
           <FormField
             name="email"
@@ -39,6 +48,11 @@ const SignUp = () => {
             label="Email"
             styles="mt-4"
             textContentType="emailAddress"
+            rules={{
+              required: { value: true, message: 'Email is required' },
+              maxLength: { value: 50, message: 'Max length = 50' },
+              pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Invalid email' },
+            }}
           />
           <FormField
             name="password"
@@ -46,16 +60,19 @@ const SignUp = () => {
             label="Password"
             styles="mt-4"
             textContentType="password"
+            rules={{
+              required: { value: true, message: 'Password is required' },
+              maxLength: { value: 50, message: 'Max length = 50' },
+            }}
           />
           <CustomButton
             title="Sign up"
             containerStyles="w-full mt-7"
-            handlePress={() => {}}
+            handlePress={handleSubmit(onSubmit)}
+            disabled={!isValid}
           />
           <View className="justify-center flex-row gap-2 mt-3">
-            <Text className="text-md font-robolight">
-              Have an account already?
-            </Text>
+            <Text className="text-md font-robolight">Have an account already?</Text>
             <Link href="/sign-in" className="text-secondary font-robobold">
               Sign in
             </Link>
