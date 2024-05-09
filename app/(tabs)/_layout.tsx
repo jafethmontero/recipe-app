@@ -15,7 +15,7 @@ const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
   return (
     <View className="justify-center items-center gap-1">
       <Image source={icon} resizeMode="contain" tintColor={color} className="w-6 h-6" />
-      <Text className={`${focused ? 'font-robobold text-secondary' : 'font-roboregular text-gray'} text-xs`}>
+      <Text className={`${focused ? 'font-robobold' : 'font-roboregular'} text-xs`} style={{ color: color }}>
         {name}
       </Text>
     </View>
@@ -32,6 +32,15 @@ const TabLayout: React.FC = () => {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, false),
+        tabBarStyle: {
+          borderTopWidth: 1,
+          height: 80,
+          borderTopColor: '#d1d5db',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        },
       }}
     >
       <Tabs.Screen
