@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
 
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useClientOnlyValue } from "@/hooks/useClientOnlyValue";
 import { Image, ImageSourcePropType } from "react-native";
 
 const Icon = ({

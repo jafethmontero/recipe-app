@@ -7,6 +7,7 @@ module.exports = {
         primary: "#f3c614",
         secondary: "#F9A826",
         danger: "#e3342f",
+        gray: "#d1d5db",
       },
       fontFamily: {
         smregular: ["SpaceMono-Regular", "sans-serif"],
