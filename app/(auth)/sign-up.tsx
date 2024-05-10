@@ -8,7 +8,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '../../firebaseConfig';
 
-interface SignUpForm {
+interface SignUpFormType {
   username: string;
   email: string;
   password: string;
@@ -19,7 +19,7 @@ const SignUp: React.FC = () => {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm<SignUpForm>({
+  } = useForm<SignUpFormType>({
     defaultValues: {
       username: '',
       email: '',
@@ -27,7 +27,7 @@ const SignUp: React.FC = () => {
     },
   });
 
-  const signUp = async (data: SignUpForm) => {
+  const signUp = async (data: SignUpFormType) => {
     const { username, email, password } = data;
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -40,10 +40,10 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const onSubmit = (data: SignUpForm) => signUp(data);
+  const onSubmit = (data: SignUpFormType) => signUp(data);
 
   return (
-    <SafeAreaView className="h-full">
+    <SafeAreaView className="h-full bg-snow">
       <ScrollView>
         <View className="w-full h-[75vh] justify-center px-4 my-6">
           <Logo />

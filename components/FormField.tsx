@@ -46,7 +46,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
             <View
               className={`${
                 errors[name] ? 'border-red-500' : 'border-gray'
-              } border-2 w-full h-16 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row`}
+              } border w-full h-16 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row`}
             >
               <TextInput
                 placeholder={placeholder}

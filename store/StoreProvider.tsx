@@ -1,17 +1,26 @@
 import { auth } from '@/firebaseConfig';
-import { onAuthStateChanged } from 'firebase/auth';
-import React, { useContext, useEffect, useState } from 'react';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 interface StoreProps {
-  user: any;
+  user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
 
+type StoreContextType = StoreProps;
+
 interface StoreProviderProps {
   children: React.ReactNode;
 }
-const StoreContext = React.createContext<StoreProps>({ user: null, isAuthenticated: false, isLoading: true });
+
+const initialContext: StoreContextType = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+};
+
+const StoreContext = React.createContext<StoreContextType>(initialContext);
 
 export const useStoreContext = () => useContext(StoreContext);
 
@@ -23,22 +32,17 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   });
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
-        setState({ ...state, user, isAuthenticated: true });
+        setState({ user, isAuthenticated: true, isLoading: false });
       } else {
-        setState({ ...state, user: null, isAuthenticated: false });
+        setState({ user: null, isAuthenticated: false, isLoading: false });
       }
-      setState({ ...state, isLoading: false });
     });
+    return () => unsubscribe();
   }, []);
 
-  return (
-    <StoreContext.Provider
-      value={{ user: state.user, isAuthenticated: state.isAuthenticated, isLoading: state.isLoading }}
-    >
-      {children}
-    </StoreContext.Provider>
-  );
+  const value = useMemo(() => ({ ...state }), [state]);
+
+  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 };

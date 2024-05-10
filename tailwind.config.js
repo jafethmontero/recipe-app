@@ -4,10 +4,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#f3c614',
+        primary: '#d1d5db',
         secondary: '#F9A826',
         danger: '#e3342f',
-        gray: '#d1d5db',
+        gray: '#f1f2f4',
+        snow: '#fbfbfb',
+        silver: '#d1d5db',
       },
       fontFamily: {
         smregular: ['SpaceMono-Regular', 'sans-serif'],

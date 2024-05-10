@@ -7,8 +7,9 @@ import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 const Onboarding: React.FC = () => {
   const { isAuthenticated, isLoading } = useStoreContext();
-  console.log(isAuthenticated);
+
   if (!isLoading && isAuthenticated) return <Redirect href="/home" />;
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView contentContainerStyle={{ height: '100%' }}>

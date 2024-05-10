@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface SignInForm {
+interface SignInFormType {
   email: string;
   password: string;
 }
@@ -18,7 +18,7 @@ const SignIn: React.FC = () => {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm<SignInForm>({
+  } = useForm<SignInFormType>({
     defaultValues: {
       email: '',
       password: '',
@@ -26,24 +26,22 @@ const SignIn: React.FC = () => {
     mode: 'onBlur',
   });
 
-  const signIn = async (data: SignInForm) => {
+  const signIn = async (data: SignInFormType) => {
     const { email, password } = data;
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-      console.log(user);
       router.push('/home');
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onSubmit = (data: SignInForm) => {
+  const onSubmit = (data: SignInFormType) => {
     signIn(data);
-    router.push('/home');
   };
 
   return (
-    <SafeAreaView className="h-full">
+    <SafeAreaView className="h-full bg-snow">
       <ScrollView>
         <View className="w-full h-[75vh] justify-center px-4 my-6">
           <Logo />
