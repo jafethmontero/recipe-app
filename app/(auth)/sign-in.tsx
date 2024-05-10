@@ -1,7 +1,9 @@
 import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import Logo from '@/components/Logo';
+import { auth } from '@/firebaseConfig';
 import { Link, router } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -24,8 +26,19 @@ const SignIn: React.FC = () => {
     mode: 'onBlur',
   });
 
+  const signIn = async (data: SignInForm) => {
+    const { email, password } = data;
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      console.log(user);
+      router.push('/home');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onSubmit = (data: SignInForm) => {
-    console.log(data);
+    signIn(data);
     router.push('/home');
   };
 

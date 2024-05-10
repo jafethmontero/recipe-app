@@ -1,10 +1,12 @@
 import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import Logo from '@/components/Logo';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../../firebaseConfig';
 
 interface SignUpForm {
   username: string;
@@ -24,7 +26,21 @@ const SignUp: React.FC = () => {
       password: '',
     },
   });
-  const onSubmit = (data: SignUpForm) => console.log(data);
+
+  const signUp = async (data: SignUpForm) => {
+    const { username, email, password } = data;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      updateProfile(userCredential.user, {
+        displayName: username,
+      });
+      router.push('/home');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = (data: SignUpForm) => signUp(data);
 
   return (
     <SafeAreaView className="h-full">

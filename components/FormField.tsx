@@ -50,7 +50,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
             >
               <TextInput
                 placeholder={placeholder}
-                className="flex-1 text-base font-roboregular"
+                className="flex-1 text-base font-roboregular h-full"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
