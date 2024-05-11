@@ -14,9 +14,9 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity className="mx-6 my-2">
       {/*Header section*/}
-      <View className="bg-white rounded-xl my-2 min-h-[250px] mx-6 shadow-md">
+      <View className="bg-white rounded-xl min-h-[250px] shadow-md">
         <Image
           source={require('../assets/images/food.jpg')}
           className="w-full h-40 rounded-t-xl"

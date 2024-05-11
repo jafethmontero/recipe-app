@@ -62,12 +62,31 @@ const HomeScreen: React.FC = () => {
           </View>
         )}
         data={[
-          { id: '1', title: 'Aji de gallina', imageUrl: '../../assets/images/food.jpg' },
-          { id: '2', title: 'Pan naan', imageUrl: '../../assets/images/food.jpg' },
-          { id: '3', title: 'Spice fried', imageUrl: '../../assets/images/food.jpg' },
+          { id: '1', title: 'Spaghetti', imageUrl: 'food.jpg' },
+          { id: '2', title: 'Pizza', imageUrl: 'food.jpg' },
         ]}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <RecipeCard item={item} likes={likes} />}
+        ListEmptyComponent={() => (
+          <View className="flex-1 items-center justify-center mt-20">
+            <Image
+              source={require('../../assets/icons/chef-empty.png')}
+              className="w-32 h-32"
+              resizeMode="contain"
+              tintColor="#9da3af"
+            />
+            <Text className="text-lg font-robobold mb-4">No recipes found</Text>
+            <TouchableOpacity className="items-center gap-2">
+              <Text className="font-roboregular mt-2">Add a new recipe</Text>
+              <Image
+                source={require('../../assets/icons/001-plus.png')}
+                className="w-8 h-8"
+                resizeMode="contain"
+                tintColor="#F9A826"
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       />
     </SafeAreaView>
   );
