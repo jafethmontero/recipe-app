@@ -1,8 +1,8 @@
-import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
-const Categories: React.FC = () => {
-  const selected = 'All';
+const Categories: React.FC<{ styles?: string }> = ({ styles }) => {
+  const [selected, setSelected] = useState('1');
   return (
     <FlatList
       data={[
@@ -18,12 +18,15 @@ const Categories: React.FC = () => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <View className="p-4">
-          <Text className={`${selected === item.title ? 'font-robobold' : 'font-robolight text-silver'}`}>
-            {item.title}
-          </Text>
+          <TouchableOpacity onPress={() => setSelected(item.id)}>
+            <Text className={`font-robobold ${selected !== item.id && 'text-silver font-roboregular'}`}>
+              {item.title}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
       horizontal
+      className={`${styles}`}
     />
   );
 };
