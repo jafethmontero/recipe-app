@@ -58,7 +58,7 @@ const TabLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
-        name="search"
+        name="search/[query]"
         options={{
           title: 'Search',
           tabBarIcon: ({ color, focused }) => (
@@ -72,7 +72,7 @@ const TabLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
-        name="create"
+        name="post"
         options={{
           title: 'Post',
           tabBarIcon: ({ color, focused }) => (

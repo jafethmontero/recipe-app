@@ -5,23 +5,22 @@ type Item = {
   title: string;
   id: string;
   imageUrl: string;
+  likesCount: number;
+  comments: string[];
+  creator: string;
+  cookTime: number;
 };
 
 interface RecipeCardProps {
   item: Item;
-  likes: number;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
   return (
     <TouchableOpacity className="mx-6 my-2">
       {/*Header section*/}
       <View className="bg-white rounded-xl min-h-[250px] shadow-md">
-        <Image
-          source={require('../assets/images/food.jpg')}
-          className="w-full h-40 rounded-t-xl"
-          resizeMode="cover"
-        />
+        <Image src={item.imageUrl} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
         <Text className="text-2xl font-robobold px-6 pt-3">{item.title}</Text>
 
         {/*Card controls section*/}
@@ -30,14 +29,16 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
             <TouchableOpacity onPress={() => {}}>
               <Image
                 source={
-                  likes > 0 ? require('../assets/icons/heart.png') : require('../assets/icons/001-heart.png')
+                  item.likesCount > 0
+                    ? require('../assets/icons/heart.png')
+                    : require('../assets/icons/001-heart.png')
                 }
                 className="w-4 h-4"
                 resizeMode="contain"
-                tintColor={likes > 0 ? '#d7443e' : '#000'}
+                tintColor={item.likesCount > 0 ? '#d7443e' : '#000'}
               />
             </TouchableOpacity>
-            <Text className="text-xs font-robothin">{`${likes} likes`}</Text>
+            <Text className="text-xs font-robothin">{`${item.likesCount} likes`}</Text>
           </View>
           <View className="justify-center items-center">
             <TouchableOpacity>
@@ -47,7 +48,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
                 resizeMode="contain"
               />
             </TouchableOpacity>
-            <Text className="text-xs font-robothin">(0)</Text>
+            <Text className="text-xs font-robothin">({item.comments.length})</Text>
           </View>
           <View className="justify-center items-center">
             <Image
@@ -55,7 +56,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
               className="w-4 h-4 mb-1"
               resizeMode="contain"
             />
-            <Text className="text-xs font-robothin">30 min</Text>
+            <Text className="text-xs font-robothin">{item.cookTime} min</Text>
           </View>
         </View>
 
@@ -67,7 +68,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item, likes }) => {
               className="w-6 h-6 mb-1"
               resizeMode="contain"
             />
-            <Text className="font-roboregular text-md">Jafeth Montero</Text>
+            <Text className="font-roboregular text-md">{item.creator}</Text>
           </View>
           <TouchableOpacity>
             <Image

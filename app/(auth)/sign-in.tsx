@@ -29,7 +29,7 @@ const SignIn: React.FC = () => {
   const signIn = async (data: SignInFormType) => {
     const { email, password } = data;
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       router.push('/home');
     } catch (error) {
       console.log(error);

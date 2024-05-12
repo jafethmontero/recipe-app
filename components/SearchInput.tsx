@@ -1,15 +1,17 @@
+import { router, usePathname } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface SearchInputProps {
   placeholder?: string;
   styles?: string;
-  handleChange: (text: string) => void;
-  value: string;
+  initialQuery?: string;
 }
 
 const SearchInput: React.FC<SearchInputProps> = (props) => {
-  const { styles, placeholder, handleChange, value } = props;
+  const { styles, placeholder, initialQuery } = props;
+  const [query, setQuery] = useState(initialQuery ?? '');
+  const pathname = usePathname();
 
   return (
     <View
@@ -18,11 +20,25 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
       <TextInput
         placeholder={placeholder}
         className="flex-1 text-base font-roboregular h-full"
-        onChangeText={handleChange}
-        value={value}
+        onChangeText={(e) => setQuery(e)}
+        value={query}
       />
-      <TouchableOpacity onPress={() => {}}>
-        <Image source={require('../assets/icons/001-search.png')} className="w-5 h-5" resizeMode="contain" />
+      <TouchableOpacity
+        onPress={() => {
+          if (pathname.startsWith('/search')) {
+            router.setParams({ query });
+          } else {
+            router.push(`/search/${query}`);
+          }
+        }}
+        disabled={!query}
+      >
+        <Image
+          source={require('../assets/icons/001-search.png')}
+          className="w-5 h-5"
+          resizeMode="contain"
+          tintColor={!query ? '#d1d5db' : 'black'}
+        />
       </TouchableOpacity>
     </View>
   );
