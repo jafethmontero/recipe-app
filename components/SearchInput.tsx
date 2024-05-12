@@ -12,6 +12,12 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
   const { styles, placeholder, initialQuery } = props;
   const [query, setQuery] = useState(initialQuery ?? '');
   const pathname = usePathname();
+  const handleChange = (e: string) => {
+    if (!e && pathname.startsWith('/search')) {
+      router.setParams({ query: '' });
+    }
+    setQuery(e);
+  };
 
   return (
     <View
@@ -20,7 +26,7 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
       <TextInput
         placeholder={placeholder}
         className="flex-1 text-base font-roboregular h-full"
-        onChangeText={(e) => setQuery(e)}
+        onChangeText={(e) => handleChange(e)}
         value={query}
       />
       <TouchableOpacity
@@ -31,14 +37,8 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
             router.push(`/search/${query}`);
           }
         }}
-        disabled={!query}
       >
-        <Image
-          source={require('../assets/icons/001-search.png')}
-          className="w-5 h-5"
-          resizeMode="contain"
-          tintColor={!query ? '#d1d5db' : 'black'}
-        />
+        <Image source={require('../assets/icons/001-search.png')} className="w-5 h-5" resizeMode="contain" />
       </TouchableOpacity>
     </View>
   );
