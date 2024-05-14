@@ -87,27 +87,14 @@ const UserWelcomeBanner: React.FC<{ user: User | null }> = ({ user }) => {
 
 const HomeScreen: React.FC = () => {
   const { user } = useStoreContext();
-  const [hasNotification, setHasNotification] = useState<boolean>(false);
 
   return (
     <SafeAreaView className="bg-snow h-full">
       <FlatList
         ListHeaderComponent={() => (
-          <View className="mt-6 px-4">
+          <View className="mt-6 px-6">
             <View className="flex-row items-center">
               <UserWelcomeBanner user={user} />
-              <TouchableOpacity onPress={() => setHasNotification(!hasNotification)}>
-                <Image
-                  source={
-                    hasNotification
-                      ? require('../../assets/icons/notification.png')
-                      : require('../../assets/icons/001-notification-bell.png')
-                  }
-                  className="w-5 h-5"
-                  resizeMode="contain"
-                  tintColor="#F9A826"
-                />
-              </TouchableOpacity>
             </View>
             <SearchInput placeholder="Search for a recipe..." styles="mt-6" />
             <Categories styles="mt-2" />
