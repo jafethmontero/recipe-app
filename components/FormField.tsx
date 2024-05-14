@@ -33,10 +33,14 @@ const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string =
 const FormField: React.FC<FormFieldProps> = (props) => {
   const { control, label, name, placeholder, styles, textContentType, rules } = props;
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const isRequired = !!rules?.required;
 
   return (
     <View className={`space-y-2 ${styles}`}>
-      <Text className="text-base font-roboregular">{label}</Text>
+      <Text className="text-base font-roboregular">
+        {label}
+        <Text className="text-red-500">{isRequired ? '*' : ''}</Text>
+      </Text>
       <Controller
         control={control}
         name={name}
@@ -56,6 +60,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
                 value={value}
                 textContentType={textContentType}
                 secureTextEntry={textContentType === 'password' ? !showPassword : false}
+                autoCapitalize="none"
               />
               {textContentType === 'password' ? (
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

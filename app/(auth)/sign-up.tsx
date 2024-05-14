@@ -1,18 +1,11 @@
 import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import Logo from '@/components/Logo';
+import useCreateUserAccount, { SignUpFormType } from '@/hooks/useCreateUserAccount';
 import { Link, router } from 'expo-router';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { auth } from '../../firebaseConfig';
-
-interface SignUpFormType {
-  username: string;
-  email: string;
-  password: string;
-}
 
 const SignUp: React.FC = () => {
   const {
@@ -26,21 +19,11 @@ const SignUp: React.FC = () => {
       password: '',
     },
   });
+  const { createUserAccount, loading, errorMessage, user } = useCreateUserAccount();
 
-  const signUp = async (data: SignUpFormType) => {
-    const { username, email, password } = data;
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      updateProfile(userCredential.user, {
-        displayName: username,
-      });
-      router.push('/home');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onSubmit = (data: SignUpFormType) => signUp(data);
+  if (!loading && user) {
+    router.push('/home');
+  }
 
   return (
     <SafeAreaView className="h-full bg-snow">
@@ -56,6 +39,7 @@ const SignUp: React.FC = () => {
             rules={{
               required: { value: true, message: 'Password is required' },
               maxLength: { value: 50, message: 'Max length = 50' },
+              minLength: { value: 4, message: 'Min length = 4' },
             }}
           />
           <FormField
@@ -79,14 +63,17 @@ const SignUp: React.FC = () => {
             rules={{
               required: { value: true, message: 'Password is required' },
               maxLength: { value: 50, message: 'Max length = 50' },
+              minLength: { value: 8, message: 'Min length = 8' },
             }}
           />
           <CustomButton
             title="Sign up"
             containerStyles="w-full mt-7"
-            handlePress={handleSubmit(onSubmit)}
+            handlePress={handleSubmit((data) => createUserAccount(data))}
             disabled={!isValid}
+            loading={loading}
           />
+          {errorMessage ? <Text className="text-red-500 text-sm mt-2">{errorMessage}</Text> : null}
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">Have an account already?</Text>
             <Link href="/sign-in" className="text-secondary font-robobold">

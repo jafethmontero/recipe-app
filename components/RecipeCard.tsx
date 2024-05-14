@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
+import { router } from 'expo-router';
 
 type Item = {
   title: string;
@@ -17,7 +18,7 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
   return (
-    <TouchableOpacity className="mx-6 my-2">
+    <TouchableOpacity className="mx-6 my-2" onPress={() => router.push(`/recipe/${item.id}`)}>
       {/*Header section*/}
       <View className="bg-white rounded-xl min-h-[250px] shadow-md">
         <Image src={item.imageUrl} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
@@ -64,9 +65,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
         <View className="flex-row px-6 pt-2 pb-4 items-center">
           <View className="flex-row items-center gap-2 flex-1">
             <Image
-              source={require('../assets/icons/004-user.png')}
-              className="w-6 h-6 mb-1"
-              resizeMode="contain"
+              src="https://picsum.photos/500/300"
+              className="w-6 h-6 mb-1 rounded-full"
+              resizeMode="cover"
             />
             <Text className="font-roboregular text-md">{item.creator}</Text>
           </View>

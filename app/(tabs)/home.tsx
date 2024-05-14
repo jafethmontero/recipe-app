@@ -73,9 +73,9 @@ const UserWelcomeBanner: React.FC<{ user: User | null }> = ({ user }) => {
   return (
     <View className="flex-row items-center gap-1 flex-1">
       <Image
-        source={profilePhoto ?? require('../../assets/icons/004-user.png')}
-        className="w-10 h-10"
-        resizeMode="contain"
+        src={profilePhoto ?? 'https://picsum.photos/500/300'}
+        className="w-10 h-10 rounded-full"
+        resizeMode="cover"
       />
       <View>
         <Text className="font-robolight text-sm">Welcome back,</Text>
