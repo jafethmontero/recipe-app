@@ -1,21 +1,29 @@
-import { StyleSheet, Text, View } from "react-native";
+import CustomButton from '@/components/CustomButton';
+import { auth } from '@/firebaseConfig';
+import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
+import { router } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function AccountScreen() {
+const Account: React.FC = () => {
+  const [signOutCallback, signOutPending, signOutError] = useFirebaseApiCallback(async () => {
+    await signOut(auth);
+    router.push('/sign-in');
+  }, [auth]);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Account</Text>
-    </View>
+    <SafeAreaView>
+      <Text>Account</Text>
+      <CustomButton
+        title="Sign Out"
+        handlePress={() => signOutCallback()}
+        disabled={signOutPending}
+        loading={signOutPending}
+      />
+      {signOutError && <Text>Error: {signOutError.message}</Text>}
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
+export default Account;

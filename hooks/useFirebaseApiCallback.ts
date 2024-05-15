@@ -12,7 +12,7 @@ type StateType = {
 const useFirebaseApiCallback = (
   callback: (...args: any) => Promise<any>,
   deps: React.DependencyList
-): [(args: any) => void, boolean, ErrorT] => {
+): [(args?: any) => void, boolean, ErrorT] => {
   const [state, setState] = useState<StateType>({ pending: false, error: null });
 
   const callbackRef = useValueRef(callback);
@@ -41,7 +41,7 @@ const useFirebaseApiCallback = (
     [state.pending, state.error]
   );
   useDebugValue(result);
-  return result as [(args: any) => void, boolean, ErrorT];
+  return result as [(args?: any) => void, boolean, ErrorT];
 };
 
 export { useFirebaseApiCallback };

@@ -67,7 +67,7 @@ const SignIn: React.FC = () => {
             title="Login"
             containerStyles="w-full mt-7"
             handlePress={handleSubmit((data) => signInCallback(data))}
-            disabled={!isValid}
+            disabled={!isValid || userPending}
             loading={userPending}
           />
           {userError ? (

@@ -106,7 +106,7 @@ const SignUp: React.FC = () => {
             title="Sign up"
             containerStyles="w-full mt-7"
             handlePress={handleSubmit((data) => createUserCallback(data))}
-            disabled={!isValid}
+            disabled={!isValid || userPending}
             loading={userPending}
           />
           {userError?.message ? <Text className="text-red-500 text-sm mt-2">{userError.message}</Text> : null}
