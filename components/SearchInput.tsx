@@ -38,8 +38,9 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
             router.push(`/search/${query}`);
           }
         }}
+        disabled={!query}
       >
-        <Image source={icons.SEARCH} className="w-5 h-5" resizeMode="contain" />
+        {query ? <Image source={icons.SEARCH} className="w-5 h-5" resizeMode="contain" /> : null}
       </TouchableOpacity>
     </View>
   );

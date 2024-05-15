@@ -129,7 +129,7 @@ const HomeScreen: React.FC = () => {
     <SafeAreaView className="bg-snow h-full">
       <FlatList
         ListHeaderComponent={() => (
-          <View className="mt-6 px-6">
+          <View className="mt-6 px-4 mb-2">
             <View className="flex-row items-center">
               <UserWelcomeBanner user={userObject} errorMessage={userError?.message} />
             </View>
