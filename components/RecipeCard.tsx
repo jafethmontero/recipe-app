@@ -62,7 +62,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
           </View>
 
           {/*Footer section*/}
-          <View className="flex-row gap-2 items-center justify-center py-4">
+          <View className="flex-row gap-2 items-center justify-start py-4 pl-6">
             <View className="bg-secondary w-20 rounded-xl items-center">
               <Text className="text-xs font-robobold text-white py-1">Appetizer</Text>
             </View>
