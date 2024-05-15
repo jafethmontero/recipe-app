@@ -2,11 +2,14 @@ import Categories from '@/components/Categories';
 import CustomButton from '@/components/CustomButton';
 import RecipeCard from '@/components/RecipeCard';
 import SearchInput from '@/components/SearchInput';
+import { db } from '@/firebaseConfig';
+import { useFirebaseApi } from '@/hooks/useFirebaseApi';
 import { useStoreContext } from '@/store/StoreProvider';
+import { UserObject } from '@/types/types';
 import { router } from 'expo-router';
-import { type User } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const mockData = [
@@ -66,17 +69,20 @@ const mockData = [
   },
 ];
 
-const UserWelcomeBanner: React.FC<{ user: User | null }> = ({ user }) => {
-  const username = user ? user.displayName : 'Unknown user';
-  const profilePhoto = user ? user.photoURL : '';
+const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | undefined }> = ({
+  user,
+  errorMessage,
+}) => {
+  const username = user?.username ?? 'Unknown user';
+  const profilePhoto = user?.profileImageURL ? user.profileImageURL : 'https://picsum.photos/500/300';
+
+  if (errorMessage) {
+    return <Text className="text-red-500 text-lg">{errorMessage}</Text>;
+  }
 
   return (
     <View className="flex-row items-center gap-1 flex-1">
-      <Image
-        src={profilePhoto ?? 'https://picsum.photos/500/300'}
-        className="w-10 h-10 rounded-full"
-        resizeMode="cover"
-      />
+      <Image src={profilePhoto} className="w-10 h-10 rounded-full" resizeMode="cover" />
       <View>
         <Text className="font-robolight text-sm">Welcome back,</Text>
         <Text className="font-robobold text-2xl">{username}</Text>
@@ -86,7 +92,37 @@ const UserWelcomeBanner: React.FC<{ user: User | null }> = ({ user }) => {
 };
 
 const HomeScreen: React.FC = () => {
-  const { user } = useStoreContext();
+  const { authUser } = useStoreContext();
+  const [userObject, setUserObject] = useState(null);
+  const [userPending, userError] = useFirebaseApi(
+    async () => {
+      let userObject = null;
+      if (authUser) {
+        const userRef = doc(db, 'users', authUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          userObject = userSnap.data();
+        }
+      }
+      return userObject;
+    },
+    (userObject) => {
+      if (userObject) {
+        setUserObject(userObject);
+      }
+    },
+    [authUser]
+  );
+
+  if (userPending) {
+    return (
+      <SafeAreaView className="h-full bg-snow">
+        <View className="justify-center items-center h-full">
+          <ActivityIndicator color="#F9A826" size="large" />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-snow h-full">
@@ -94,7 +130,7 @@ const HomeScreen: React.FC = () => {
         ListHeaderComponent={() => (
           <View className="mt-6 px-6">
             <View className="flex-row items-center">
-              <UserWelcomeBanner user={user} />
+              <UserWelcomeBanner user={userObject} errorMessage={userError?.message} />
             </View>
             <SearchInput placeholder="Search for a recipe..." styles="mt-6" />
             <Categories styles="mt-2" />

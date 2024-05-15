@@ -2,6 +2,7 @@ import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import Logo from '@/components/Logo';
 import { auth } from '@/firebaseConfig';
+import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import { Link, router } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
@@ -25,20 +26,14 @@ const SignIn: React.FC = () => {
     },
     mode: 'onBlur',
   });
-
-  const signIn = async (data: SignInFormType) => {
-    const { email, password } = data;
-    try {
+  const [signInCallback, userPending, userError] = useFirebaseApiCallback(
+    async (data) => {
+      const { email, password } = data;
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/home');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onSubmit = (data: SignInFormType) => {
-    signIn(data);
-  };
+    },
+    [auth]
+  );
 
   return (
     <SafeAreaView className="h-full bg-snow">
@@ -65,15 +60,19 @@ const SignIn: React.FC = () => {
             textContentType="password"
             rules={{
               required: { value: true, message: 'Password is required' },
-              maxLength: { value: 50, message: 'Max length = 50' },
+              minLength: { value: 8, message: 'Min length = 8' },
             }}
           />
           <CustomButton
             title="Login"
             containerStyles="w-full mt-7"
-            handlePress={handleSubmit(onSubmit)}
+            handlePress={handleSubmit((data) => signInCallback(data))}
             disabled={!isValid}
+            loading={userPending}
           />
+          {userError ? (
+            <Text className="text-red-500 text-sm font-robobold mt-2">{userError.message}</Text>
+          ) : null}
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">Don't have an account?</Text>
             <Link href="/sign-up" className="text-secondary font-robobold">

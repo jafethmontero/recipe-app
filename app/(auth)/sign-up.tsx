@@ -1,11 +1,21 @@
 import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import Logo from '@/components/Logo';
-import useCreateUserAccount, { SignUpFormType } from '@/hooks/useCreateUserAccount';
+import { auth, db } from '@/firebaseConfig';
+import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import { Link, router } from 'expo-router';
+import { createUserWithEmailAndPassword, updateProfile, type User } from 'firebase/auth';
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+interface SignUpFormType {
+  username: string;
+  email: string;
+  password: string;
+}
 
 const SignUp: React.FC = () => {
   const {
@@ -18,12 +28,38 @@ const SignUp: React.FC = () => {
       email: '',
       password: '',
     },
+    mode: 'onBlur',
   });
-  const { createUserAccount, loading, errorMessage, user } = useCreateUserAccount();
+  const [newUser, setNewUser] = useState<User | null>(null);
+  const [createUserCallback, userPending, userError] = useFirebaseApiCallback(
+    async (data) => {
+      const { username, email, password } = data;
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const usersRef = collection(db, 'users');
+      setNewUser(userCredential.user);
+      await updateProfile(userCredential.user, {
+        displayName: username,
+      });
+      await setDoc(doc(usersRef, userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        username,
+        email,
+        profileImageURL: '',
+        followers: [],
+        following: [],
+        recipes: [],
+        savedRecipes: [],
+        createdAt: Date.now(),
+      });
+    },
+    [auth]
+  );
 
-  if (!loading && user) {
-    router.push('/home');
-  }
+  useEffect(() => {
+    if (!userPending && newUser) {
+      router.push('/home');
+    }
+  }, [userPending, newUser]);
 
   return (
     <SafeAreaView className="h-full bg-snow">
@@ -69,11 +105,11 @@ const SignUp: React.FC = () => {
           <CustomButton
             title="Sign up"
             containerStyles="w-full mt-7"
-            handlePress={handleSubmit((data) => createUserAccount(data))}
+            handlePress={handleSubmit((data) => createUserCallback(data))}
             disabled={!isValid}
-            loading={loading}
+            loading={userPending}
           />
-          {errorMessage ? <Text className="text-red-500 text-sm mt-2">{errorMessage}</Text> : null}
+          {userError?.message ? <Text className="text-red-500 text-sm mt-2">{userError.message}</Text> : null}
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">Have an account already?</Text>
             <Link href="/sign-in" className="text-secondary font-robobold">

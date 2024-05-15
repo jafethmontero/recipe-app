@@ -3,7 +3,7 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 interface StoreProps {
-  user: User | null;
+  authUser: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -15,7 +15,7 @@ interface StoreProviderProps {
 }
 
 const initialContext: StoreContextType = {
-  user: null,
+  authUser: null,
   isAuthenticated: false,
   isLoading: true,
 };
@@ -26,7 +26,7 @@ export const useStoreContext = () => useContext(StoreContext);
 
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   const [state, setState] = useState<StoreProps>({
-    user: null,
+    authUser: null,
     isAuthenticated: false,
     isLoading: true,
   });
@@ -34,9 +34,9 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setState({ user, isAuthenticated: true, isLoading: false });
+        setState({ authUser: user, isAuthenticated: true, isLoading: false });
       } else {
-        setState({ user: null, isAuthenticated: false, isLoading: false });
+        setState({ authUser: null, isAuthenticated: false, isLoading: false });
       }
     });
     return () => unsubscribe();
