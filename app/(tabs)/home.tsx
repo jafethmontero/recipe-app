@@ -2,6 +2,7 @@ import Categories from '@/components/Categories';
 import CustomButton from '@/components/CustomButton';
 import RecipeCard from '@/components/RecipeCard';
 import SearchInput from '@/components/SearchInput';
+import { icons } from '@/constants/icons';
 import { db } from '@/firebaseConfig';
 import { useFirebaseApi } from '@/hooks/useFirebaseApi';
 import { useStoreContext } from '@/store/StoreProvider';
@@ -141,12 +142,7 @@ const HomeScreen: React.FC = () => {
         renderItem={({ item }) => <RecipeCard item={item} />}
         ListEmptyComponent={() => (
           <View className="flex-1 items-center justify-center mt-20">
-            <Image
-              source={require('../../assets/icons/chef-empty.png')}
-              className="w-32 h-32"
-              resizeMode="contain"
-              tintColor="#9da3af"
-            />
+            <Image source={icons.EMPTY_CHEF} className="w-32 h-32" resizeMode="contain" tintColor="#9da3af" />
             <Text className="text-lg font-robobold mb-4">No recipes found</Text>
             <CustomButton
               title="Add new recipe"

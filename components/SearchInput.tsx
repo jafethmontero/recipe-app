@@ -1,3 +1,4 @@
+import { icons } from '@/constants/icons';
 import { router, usePathname } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, TextInput, TouchableOpacity, View } from 'react-native';
@@ -38,7 +39,7 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
           }
         }}
       >
-        <Image source={require('../assets/icons/001-search.png')} className="w-5 h-5" resizeMode="contain" />
+        <Image source={icons.SEARCH} className="w-5 h-5" resizeMode="contain" />
       </TouchableOpacity>
     </View>
   );

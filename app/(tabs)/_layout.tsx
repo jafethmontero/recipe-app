@@ -3,6 +3,7 @@ import React from 'react';
 
 import { useClientOnlyValue } from '@/hooks/useClientOnlyValue';
 import { Image, ImageSourcePropType, View, Text } from 'react-native';
+import { icons } from '@/constants/icons';
 
 interface TabIconProps {
   icon: ImageSourcePropType;
@@ -48,12 +49,7 @@ const TabLayout: React.FC = () => {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              name="Home"
-              color={color}
-              focused={focused}
-              icon={require('../../assets/icons/002-chef.png')}
-            />
+            <TabIcon name="Home" color={color} focused={focused} icon={icons.CHEF} />
           ),
         }}
       />
@@ -62,12 +58,7 @@ const TabLayout: React.FC = () => {
         options={{
           title: 'Search',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              name="Search"
-              color={color}
-              focused={focused}
-              icon={require('../../assets/icons/001-search.png')}
-            />
+            <TabIcon name="Search" color={color} focused={focused} icon={icons.SEARCH} />
           ),
         }}
       />
@@ -76,12 +67,7 @@ const TabLayout: React.FC = () => {
         options={{
           title: 'Post',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              name="Post"
-              color={color}
-              focused={focused}
-              icon={require('../../assets/icons/001-plus.png')}
-            />
+            <TabIcon name="Post" color={color} focused={focused} icon={icons.PLUS} />
           ),
         }}
       />
@@ -90,12 +76,7 @@ const TabLayout: React.FC = () => {
         options={{
           title: 'Saved',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              name="Saved"
-              color={color}
-              focused={focused}
-              icon={require('../../assets/icons/005-save-instagram.png')}
-            />
+            <TabIcon name="Saved" color={color} focused={focused} icon={icons.BOOKMARK} />
           ),
         }}
       />
@@ -104,12 +85,7 @@ const TabLayout: React.FC = () => {
         options={{
           title: 'Account',
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon
-              name="Account"
-              color={color}
-              focused={focused}
-              icon={require('../../assets/icons/004-user.png')}
-            />
+            <TabIcon name="Account" color={color} focused={focused} icon={icons.USER} />
           ),
         }}
       />

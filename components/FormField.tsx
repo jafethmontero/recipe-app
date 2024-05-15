@@ -9,6 +9,7 @@ import {
   Controller,
 } from 'react-hook-form';
 import { TextContentType } from '@/types/types';
+import { icons } from '@/constants/icons';
 
 interface FormFieldProps {
   control: Control<any>;
@@ -65,9 +66,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
               {textContentType === 'password' ? (
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   <Image
-                    source={
-                      showPassword ? require('../assets/icons/view.png') : require('../assets/icons/hide.png')
-                    }
+                    source={showPassword ? icons.EYE_VIEW : icons.EYE_HIDE}
                     className="w-5 h-5"
                     resizeMode="contain"
                   />
