@@ -73,9 +73,9 @@ const SignUp: React.FC = () => {
             styles="mt-4"
             textContentType="username"
             rules={{
-              required: { value: true, message: 'Password is required' },
-              maxLength: { value: 50, message: 'Max length = 50' },
-              minLength: { value: 4, message: 'Min length = 4' },
+              required: { value: true, message: 'Username is required' },
+              maxLength: { value: 50, message: 'Username must be 50 characters or less.' },
+              minLength: { value: 3, message: 'Username must contain at least 3 characters.' },
             }}
           />
           <FormField
@@ -85,9 +85,12 @@ const SignUp: React.FC = () => {
             styles="mt-4"
             textContentType="emailAddress"
             rules={{
-              required: { value: true, message: 'Email is required' },
-              maxLength: { value: 50, message: 'Max length = 50' },
-              pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Invalid email' },
+              required: { value: true, message: 'Email address is required' },
+              maxLength: { value: 254, message: 'Email address must be 254 characters or less.' },
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                message: 'Invalid email address format',
+              },
             }}
           />
           <FormField
@@ -98,8 +101,7 @@ const SignUp: React.FC = () => {
             textContentType="password"
             rules={{
               required: { value: true, message: 'Password is required' },
-              maxLength: { value: 50, message: 'Max length = 50' },
-              minLength: { value: 8, message: 'Min length = 8' },
+              minLength: { value: 8, message: 'Password must be at least 8 characters long.' },
             }}
           />
           <CustomButton
