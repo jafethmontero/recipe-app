@@ -9,7 +9,7 @@ export const icons = {
   SNACK: require('@/assets/icons/snack.png'),
   VEGAN: require('@/assets/icons/vegan.png'),
   VEGETARIAN: require('@/assets/icons/vegetarian.png'),
-  GLUTEN_FREE: require('@/assets/icons/glutenFree.png'),
+  GLUTEN_FREE: require('@/assets/icons/gluten-free.png'),
   CHEF: require('@/assets/icons/002-chef.png'),
   SEARCH: require('@/assets/icons/001-search.png'),
   PLUS: require('@/assets/icons/001-plus.png'),

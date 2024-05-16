@@ -66,33 +66,30 @@ const Create: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View className="flex-row items-center mt-8">
-            <Text className="text-base font-roboregular pl-2 flex-1">Portion</Text>
-            <FormField
-              name="portion"
-              control={control}
-              rules={{
-                required: { value: true, message: 'Portion is required' },
-                maxLength: { value: 3, message: 'Max is 999' },
-              }}
-              keyboardType="numeric"
-              placeholder="2 people"
-              inputStyles="w-[50vw]"
-            />
-          </View>
-          <View className="flex-row items-center mt-4">
-            <Text className="text-base font-roboregular pl-2 flex-1">Cooking time</Text>
-            <FormField
-              name="cookTime"
-              control={control}
-              rules={{
-                required: { value: true, message: 'Cook time is required' },
-                maxLength: { value: 50, message: 'Max length = 50' },
-              }}
-              placeholder="1h 30min"
-              inputStyles="w-[50vw]"
-            />
-          </View>
+          <FormField
+            name="cookTime"
+            label="Cooking time"
+            control={control}
+            rules={{
+              required: { value: true, message: 'Cook time is required' },
+              maxLength: { value: 50, message: 'Max length = 50' },
+            }}
+            placeholder="1h 30min"
+            size="sm"
+            styles="mt-8"
+          />
+          <FormField
+            name="portion"
+            label="Portion"
+            control={control}
+            rules={{
+              required: { value: true, message: 'Cook time is required' },
+              maxLength: { value: 50, message: 'Max length = 50' },
+            }}
+            placeholder="1h 30min"
+            size="sm"
+            styles="mt-8"
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -25,6 +25,7 @@ interface FormFieldProps {
   keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
   multiline?: boolean;
   inputStyles?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {
@@ -35,8 +36,18 @@ const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string =
 };
 
 const FormField: React.FC<FormFieldProps> = (props) => {
-  const { control, label, name, placeholder, styles, textContentType, rules, keyboardType, inputStyles } =
-    props;
+  const {
+    control,
+    label,
+    name,
+    placeholder,
+    styles,
+    textContentType,
+    rules,
+    keyboardType,
+    inputStyles,
+    size = 'lg',
+  } = props;
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
@@ -47,36 +58,44 @@ const FormField: React.FC<FormFieldProps> = (props) => {
         rules={rules}
         render={({ formState: { errors }, field: { onChange, onBlur, value } }) => (
           <View>
-            {label ? <Text className="text-base font-roboregular pl-2 pb-1">{label}</Text> : null}
-            <View
-              className={`${
-                errors[name] ? 'border-red-500' : 'border-gray'
-              } border w-full h-14 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row ${inputStyles}`}
-            >
-              <TextInput
-                placeholder={placeholder}
-                className="flex-1 text-base font-roboregular h-full"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                textContentType={textContentType}
-                secureTextEntry={textContentType === 'password' ? !showPassword : false}
-                autoCapitalize="none"
-                keyboardType={keyboardType}
-                {...props}
-              />
-              {textContentType === 'password' ? (
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Image
-                    source={showPassword ? icons.EYE_VIEW : icons.EYE_HIDE}
-                    className="w-5 h-5"
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
+            <View className={`${size === 'sm' ? 'flex-row items-center' : ''}`}>
+              {label ? (
+                <Text className={`text-base font-roboregular pl-2 pb-1 ${size === 'sm' ? 'flex-1' : ''}`}>
+                  {label}
+                </Text>
               ) : null}
+              <View
+                className={`${errors[name] ? 'border-red-500' : 'border-gray'} 
+                border w-full h-14 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row 
+                ${inputStyles} ${size === 'sm' ? 'w-[50vw]' : ''}`}
+              >
+                <TextInput
+                  placeholder={placeholder}
+                  className="flex-1 text-base font-roboregular h-full"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  textContentType={textContentType}
+                  secureTextEntry={textContentType === 'password' ? !showPassword : false}
+                  autoCapitalize="none"
+                  keyboardType={keyboardType}
+                  {...props}
+                />
+                {textContentType === 'password' ? (
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Image
+                      source={showPassword ? icons.EYE_VIEW : icons.EYE_HIDE}
+                      className="w-5 h-5"
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                ) : null}
+              </View>
             </View>
             {errors[name] ? (
-              <Text className="text-red-500 mt-2 pl-2">{getFieldError(errors, name)}</Text>
+              <Text className={`text-red-500 mt-2 ${size === 'sm' ? 'pl-[44vw]' : 'pl-2'}`}>
+                {getFieldError(errors, name)}
+              </Text>
             ) : null}
           </View>
         )}
