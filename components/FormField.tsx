@@ -13,7 +13,7 @@ import { icons } from '@/constants/icons';
 
 interface FormFieldProps {
   control: Control<any>;
-  label: string;
+  label?: string;
   name: string;
   placeholder?: string;
   styles?: string;
@@ -22,6 +22,9 @@ interface FormFieldProps {
     RegisterOptions<FieldValues, FieldPath<FieldValues>>,
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
   >;
+  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
+  multiline?: boolean;
+  inputStyles?: string;
 }
 
 const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {
@@ -32,26 +35,23 @@ const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string =
 };
 
 const FormField: React.FC<FormFieldProps> = (props) => {
-  const { control, label, name, placeholder, styles, textContentType, rules } = props;
+  const { control, label, name, placeholder, styles, textContentType, rules, keyboardType, inputStyles } =
+    props;
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const isRequired = !!rules?.required;
 
   return (
     <View className={`space-y-2 ${styles}`}>
-      <Text className="text-base font-roboregular">
-        {label}
-        <Text className="text-red-500">{isRequired ? '*' : ''}</Text>
-      </Text>
       <Controller
         control={control}
         name={name}
         rules={rules}
         render={({ formState: { errors }, field: { onChange, onBlur, value } }) => (
           <View>
+            {label ? <Text className="text-base font-roboregular pl-2 pb-1">{label}</Text> : null}
             <View
               className={`${
                 errors[name] ? 'border-red-500' : 'border-gray'
-              } border w-full h-16 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row`}
+              } border w-full h-14 px-4 bg-gray rounded-2xl focus:border-secondary items-center flex-row ${inputStyles}`}
             >
               <TextInput
                 placeholder={placeholder}
@@ -62,6 +62,8 @@ const FormField: React.FC<FormFieldProps> = (props) => {
                 textContentType={textContentType}
                 secureTextEntry={textContentType === 'password' ? !showPassword : false}
                 autoCapitalize="none"
+                keyboardType={keyboardType}
+                {...props}
               />
               {textContentType === 'password' ? (
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
@@ -74,7 +76,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
               ) : null}
             </View>
             {errors[name] ? (
-              <Text className="text-red-500 mt-1 pl-2">{getFieldError(errors, name)}</Text>
+              <Text className="text-red-500 mt-2 pl-2">{getFieldError(errors, name)}</Text>
             ) : null}
           </View>
         )}

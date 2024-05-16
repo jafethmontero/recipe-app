@@ -67,10 +67,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
               <Text className="text-xs font-robobold text-white py-1">Appetizer</Text>
             </View>
             <View className="bg-secondary w-20 rounded-xl items-center">
-              <Text className="text-xs font-robobold text-white py-1">Appetizer</Text>
+              <Text className="text-xs font-robobold text-white py-1">Lunch</Text>
             </View>
             <View className="bg-secondary w-20 rounded-xl items-center">
-              <Text className="text-xs font-robobold text-white py-1">Appetizer</Text>
+              <Text className="text-xs font-robobold text-white py-1">Snack</Text>
             </View>
           </View>
         </View>
