@@ -47,7 +47,7 @@ const SignIn: React.FC = () => {
             styles="mt-4"
             textContentType="emailAddress"
             rules={{
-              required: { value: true, message: 'Email address is required' },
+              required: true,
               maxLength: { value: 254, message: 'Email address must be 254 characters or less.' },
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
@@ -62,7 +62,7 @@ const SignIn: React.FC = () => {
             styles="mt-4"
             textContentType="password"
             rules={{
-              required: { value: true, message: 'Password is required' },
+              required: true,
               minLength: { value: 8, message: 'Password must be at least 8 characters long.' },
             }}
           />

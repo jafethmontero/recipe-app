@@ -24,4 +24,5 @@ export const icons = {
   CLOCK: require('@/assets/icons/003-clock.png'),
   CHAT: require('@/assets/icons/002-chat.png'),
   ADD_IMAGE: require('@/assets/icons/add_image.png'),
+  MINUS: require('@/assets/icons/minus.png'),
 };

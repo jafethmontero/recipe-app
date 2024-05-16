@@ -13,6 +13,8 @@ import { useForm } from 'react-hook-form';
 import FormField from '@/components/FormField';
 import { icons } from '@/constants/icons';
 import * as ImagePicker from 'expo-image-picker';
+import ArrayFormField from '@/components/ArrayFormField';
+import CustomButton from '@/components/CustomButton';
 
 const Create: React.FC = () => {
   const {
@@ -25,6 +27,7 @@ const Create: React.FC = () => {
       description: '',
       portion: '',
       cookTime: '',
+      ingredients: [{ ingredientName: '' }],
     },
     mode: 'onBlur',
   });
@@ -40,6 +43,8 @@ const Create: React.FC = () => {
     }
   };
 
+  const onSubmit = (data: any) => console.log(data);
+
   return (
     <SafeAreaView className="bg-snow h-full">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -51,7 +56,7 @@ const Create: React.FC = () => {
             label="Recipe title"
             styles="mt-4"
             rules={{
-              required: { value: true, message: 'Recipe title is required' },
+              required: true,
             }}
             placeholder="Spaghetti Carbonara"
           />
@@ -61,7 +66,7 @@ const Create: React.FC = () => {
             label="Description"
             styles="mt-4"
             rules={{
-              required: { value: true, message: 'Description is required' },
+              required: true,
             }}
             placeholder="A classic Italian pasta dish with eggs, cheese, bacon and black pepper..."
             multiline={true}
@@ -84,7 +89,7 @@ const Create: React.FC = () => {
             label="Cooking time"
             control={control}
             rules={{
-              required: { value: true, message: 'Cook time is required' },
+              required: true,
               pattern: { value: /^(?=\s*\S).*(\d+h)?\s*(\d+min)?$/i, message: 'Invalid time format' },
             }}
             placeholder="1h 30min"
@@ -96,13 +101,31 @@ const Create: React.FC = () => {
             label="Portion"
             control={control}
             rules={{
-              required: { value: true, message: 'Portion is required' },
+              required: true,
               maxLength: { value: 3, message: 'Maximun portion is for 999 people.' },
             }}
             placeholder="2 people"
             size="sm"
             styles="mt-8"
             keyboardType="numeric"
+          />
+          <ArrayFormField
+            name="ingredients"
+            label="Ingredients"
+            control={control}
+            rules={{
+              required: true,
+            }}
+            placeholder="200g of sugar"
+            styles="mt-8"
+            fieldName="ingredientName"
+          />
+          <CustomButton
+            title="Sign up"
+            containerStyles="w-full mt-7"
+            handlePress={handleSubmit(onSubmit)}
+            disabled={!isValid}
+            loading={false}
           />
         </ScrollView>
       </KeyboardAvoidingView>

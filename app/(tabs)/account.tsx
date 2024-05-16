@@ -3,7 +3,7 @@ import { auth } from '@/firebaseConfig';
 import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import { router } from 'expo-router';
 import { signOut } from 'firebase/auth';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Account: React.FC = () => {

@@ -30,7 +30,7 @@ interface FormFieldProps {
 
 const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {
   if (errors[name] && typeof errors[name]?.message === 'string') {
-    return String(errors[name]?.message) || 'Field error';
+    return String(errors[name]?.message) || '';
   }
   return '';
 };
@@ -92,7 +92,7 @@ const FormField: React.FC<FormFieldProps> = (props) => {
                 ) : null}
               </View>
             </View>
-            {errors[name] ? (
+            {errors[name]?.message ? (
               <Text className={`text-red-500 mt-2 ${size === 'sm' ? 'pl-[44vw]' : 'pl-2'}`}>
                 {getFieldError(errors, name)}
               </Text>
