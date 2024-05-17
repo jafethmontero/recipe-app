@@ -15,6 +15,7 @@ import { icons } from '@/constants/icons';
 import * as ImagePicker from 'expo-image-picker';
 import ArrayFormField from '@/components/ArrayFormField';
 import CustomButton from '@/components/CustomButton';
+import Checkbox from '@/components/Checkbox';
 
 const Create: React.FC = () => {
   const {
@@ -27,11 +28,13 @@ const Create: React.FC = () => {
       description: '',
       portion: '',
       cookTime: '',
-      ingredients: [{ ingredientName: '' }],
+      ingredients: [{ ingredient: '' }],
+      steps: [{ step: '' }],
     },
     mode: 'onBlur',
   });
   const [image, setImage] = useState<string | null>(null);
+  const [value, setValue] = useState<boolean>(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -118,7 +121,24 @@ const Create: React.FC = () => {
             }}
             placeholder="200g of sugar"
             styles="mt-8"
-            fieldName="ingredientName"
+            fieldName="ingredient"
+          />
+          <ArrayFormField
+            name="steps"
+            label="Steps"
+            control={control}
+            rules={{
+              required: true,
+            }}
+            placeholder="Preheat the oven to 180°C"
+            styles="mt-8"
+            fieldName="steps"
+          />
+          <Checkbox
+            label="Breakfast"
+            value={value}
+            onValueChange={() => setValue(!value)}
+            icon={icons.BREAKFAST}
           />
           <CustomButton
             title="Sign up"
