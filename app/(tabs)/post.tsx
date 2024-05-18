@@ -4,7 +4,12 @@ import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
 import { categories } from '@/constants/categories';
 import { icons } from '@/constants/icons';
+import { auth, db, storage } from '@/firebaseConfig';
+import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
+import { addDoc, arrayUnion, collection, doc, updateDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadString } from 'firebase/storage';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -49,19 +54,58 @@ const Create: React.FC = () => {
     },
     mode: 'onBlur',
   });
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
+    async (data) => {
+      const { title, description, portion, cookTime, ingredients, steps, categories } = data;
+      const selectedCategories = Object.entries(categories)
+        .filter(([key, value]) => value)
+        .map(([key, value]) => key);
 
-  const [image, setImage] = useState<string | null>(null);
+      const recipeRef = await addDoc(collection(db, 'recipes'), {
+        title,
+        description,
+        portion,
+        cookTime,
+        ingredients,
+        steps,
+        likes: [],
+        comments: [],
+        createdAt: Date.now(),
+        createdBy: auth.currentUser?.uid,
+        categories: selectedCategories,
+      });
+      let userDocRef;
+      if (auth && auth.currentUser) {
+        userDocRef = doc(db, 'users', auth.currentUser.uid);
+        await updateDoc(userDocRef, { recipes: arrayUnion(recipeRef.id) });
+      }
+      const imagesRef = ref(storage, `recipes/${recipeRef.id}.jpg`);
+      if (image && image.base64) {
+        // todo: this should work with imag uri
+        console.log({ image });
+        const base64Image = `data:image/jpg;base64,${image.base64}`;
+        await uploadString(imagesRef, base64Image, 'data_url');
+      }
+      //const downloadURL = await getDownloadURL(imagesRef);
+      //await updateDoc(recipeRef, { imageURL: downloadURL });
+      router.push('/home');
+    },
+    [auth]
+  );
+  console.log(recipeError);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0]);
     }
   };
 
-  const categoriesOptions = categories.filter((category) =>
+  const categoriesOptions = categories.filter((category: any) =>
     Object.keys(getValues('categories')).includes(category.id)
   );
 
@@ -77,8 +121,6 @@ const Create: React.FC = () => {
       clearErrors('categories');
     }
   };
-
-  const onSubmit = (data: any) => console.log(data);
 
   return (
     <SafeAreaView className="bg-snow h-full">
@@ -111,8 +153,8 @@ const Create: React.FC = () => {
             <Text className="text-base font-roboregular pl-2 pb-1 mt-4">Recipe photo</Text>
             <View className="bg-gray w-full h-60 justify-center items-center rounded-xl">
               <TouchableOpacity onPress={pickImage} className={`${image ? 'w-full h-full' : ''}`}>
-                {image ? (
-                  <Image source={{ uri: image }} className="w-full h-full rounded-xl" />
+                {image && image.uri ? (
+                  <Image source={{ uri: image.uri }} className="w-full h-full rounded-xl" />
                 ) : (
                   <Image source={icons.ADD_IMAGE} className="w-6 h-6" tintColor="#9da3af" />
                 )}
@@ -177,10 +219,13 @@ const Create: React.FC = () => {
           <CustomButton
             title="Sign up"
             containerStyles="w-full mt-7"
-            handlePress={handleSubmit(onSubmit)}
+            handlePress={handleSubmit(createRecipeCallback)}
             disabled={Boolean(!isValid || errors.categories)}
-            loading={false}
+            loading={recipeLoading}
           />
+          {recipeError?.message ? (
+            <Text className="text-red-500 text-sm mt-2">{recipeError.message}</Text>
+          ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
