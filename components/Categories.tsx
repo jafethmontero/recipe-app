@@ -1,24 +1,13 @@
+import { categories } from '@/constants/categories';
 import { icons } from '@/constants/icons';
 import React, { useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity } from 'react-native';
 
 const Categories: React.FC<{ styles?: string }> = ({ styles }) => {
   const [selected, setSelected] = useState('1');
   return (
     <FlatList
-      data={[
-        { id: '1', title: 'All', iconName: 'ALL' },
-        { id: '2', title: 'Dinner', iconName: 'DINNER' },
-        { id: '3', title: 'Lunch', iconName: 'LUNCH' },
-        { id: '5', title: 'Breakfast', iconName: 'BREAKFAST' },
-        { id: '6', title: 'Dessert', iconName: 'DESSERT' },
-        { id: '11', title: 'Vegetarian', iconName: 'VEGETARIAN' },
-        { id: '10', title: 'Vegan', iconName: 'VEGAN' },
-        { id: '4', title: 'Appetizer', iconName: 'APPETIZER' },
-        { id: '9', title: 'Snack', iconName: 'SNACK' },
-        { id: '7', title: 'Drinks', iconName: 'DRINKS' },
-        { id: '8', title: 'Gluten-free', iconName: 'GLUTEN_FREE' },
-      ]}
+      data={categories}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <TouchableOpacity
@@ -34,7 +23,7 @@ const Categories: React.FC<{ styles?: string }> = ({ styles }) => {
           <Text
             className={`font-robobold text-secondary ${selected !== item.id && 'text-silver font-roboregular'}`}
           >
-            {item.title}
+            {item.label}
           </Text>
         </TouchableOpacity>
       )}

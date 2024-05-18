@@ -1,27 +1,31 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useForm } from 'react-hook-form';
+import ArrayFormField from '@/components/ArrayFormField';
+import CheckboxGroupField from '@/components/CheckboxGroupField';
+import CustomButton from '@/components/CustomButton';
 import FormField from '@/components/FormField';
+import { categories } from '@/constants/categories';
 import { icons } from '@/constants/icons';
 import * as ImagePicker from 'expo-image-picker';
-import ArrayFormField from '@/components/ArrayFormField';
-import CustomButton from '@/components/CustomButton';
-import Checkbox from '@/components/Checkbox';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Create: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { isValid },
+    formState: { isValid, errors },
+    getValues,
+    setError,
+    clearErrors,
   } = useForm<any>({
     defaultValues: {
       title: '',
@@ -30,12 +34,23 @@ const Create: React.FC = () => {
       cookTime: '',
       ingredients: [{ ingredient: '' }],
       steps: [{ step: '' }],
+      categories: {
+        breakfast: false,
+        lunch: false,
+        dinner: false,
+        dessert: false,
+        snack: false,
+        drinks: false,
+        vegetarian: false,
+        vegan: false,
+        glutenFree: false,
+        appetizer: false,
+      },
     },
     mode: 'onBlur',
   });
-  const [image, setImage] = useState<string | null>(null);
-  const [value, setValue] = useState<boolean>(false);
 
+  const [image, setImage] = useState<string | null>(null);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -43,6 +58,23 @@ const Create: React.FC = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+    }
+  };
+
+  const categoriesOptions = categories.filter((category) =>
+    Object.keys(getValues('categories')).includes(category.id)
+  );
+
+  const validateCategories = () => {
+    const values = getValues('categories');
+    const selectedOptions = Object.values(values).filter(Boolean).length;
+    if (selectedOptions > 3) {
+      setError('categories', {
+        type: 'validate',
+        message: 'You cannot select more than 3 options.',
+      });
+    } else {
+      clearErrors('categories');
     }
   };
 
@@ -59,7 +91,7 @@ const Create: React.FC = () => {
             label="Recipe title"
             styles="mt-4"
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
             }}
             placeholder="Spaghetti Carbonara"
           />
@@ -69,7 +101,7 @@ const Create: React.FC = () => {
             label="Description"
             styles="mt-4"
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
             }}
             placeholder="A classic Italian pasta dish with eggs, cheese, bacon and black pepper..."
             multiline={true}
@@ -92,7 +124,7 @@ const Create: React.FC = () => {
             label="Cooking time"
             control={control}
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
               pattern: { value: /^(?=\s*\S).*(\d+h)?\s*(\d+min)?$/i, message: 'Invalid time format' },
             }}
             placeholder="1h 30min"
@@ -104,7 +136,7 @@ const Create: React.FC = () => {
             label="Portion"
             control={control}
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
               maxLength: { value: 3, message: 'Maximun portion is for 999 people.' },
             }}
             placeholder="2 people"
@@ -117,7 +149,7 @@ const Create: React.FC = () => {
             label="Ingredients"
             control={control}
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
             }}
             placeholder="200g of sugar"
             styles="mt-8"
@@ -128,23 +160,25 @@ const Create: React.FC = () => {
             label="Steps"
             control={control}
             rules={{
-              required: true,
+              required: { value: true, message: 'This is a required field' },
             }}
             placeholder="Preheat the oven to 180°C"
             styles="mt-8"
-            fieldName="steps"
+            fieldName="step"
           />
-          <Checkbox
-            label="Breakfast"
-            value={value}
-            onValueChange={() => setValue(!value)}
-            icon={icons.BREAKFAST}
+          <CheckboxGroupField
+            control={control}
+            groupName="categories"
+            label="Categories"
+            options={categoriesOptions}
+            validate={validateCategories}
+            helpText="Select up to 3 categories."
           />
           <CustomButton
             title="Sign up"
             containerStyles="w-full mt-7"
             handlePress={handleSubmit(onSubmit)}
-            disabled={!isValid}
+            disabled={Boolean(!isValid || errors.categories)}
             loading={false}
           />
         </ScrollView>
