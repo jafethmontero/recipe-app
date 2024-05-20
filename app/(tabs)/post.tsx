@@ -9,10 +9,11 @@ import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { addDoc, arrayUnion, collection, doc, updateDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadString } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -31,6 +32,7 @@ const Create: React.FC = () => {
     getValues,
     setError,
     clearErrors,
+    reset,
   } = useForm<any>({
     defaultValues: {
       title: '',
@@ -55,6 +57,7 @@ const Create: React.FC = () => {
     mode: 'onBlur',
   });
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
     async (data) => {
       const { title, description, portion, cookTime, ingredients, steps, categories } = data;
@@ -76,25 +79,37 @@ const Create: React.FC = () => {
         categories: selectedCategories,
       });
       let userDocRef;
-      if (auth && auth.currentUser) {
+      if (auth?.currentUser) {
         userDocRef = doc(db, 'users', auth.currentUser.uid);
         await updateDoc(userDocRef, { recipes: arrayUnion(recipeRef.id) });
       }
-      const imagesRef = ref(storage, `recipes/${recipeRef.id}.jpg`);
-      if (image && image.base64) {
-        // todo: this should work with imag uri
-        console.log({ image });
-        const base64Image = `data:image/jpg;base64,${image.base64}`;
-        await uploadString(imagesRef, base64Image, 'data_url');
+      const imagesRef = ref(storage, `recipes/${recipeRef.id}`);
+      if (image?.uri) {
+        const blob: Blob = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            resolve(xhr.response);
+          };
+          xhr.onerror = function (e) {
+            reject(new TypeError('Network request failed'));
+          };
+          xhr.responseType = 'blob';
+          xhr.open('GET', image.uri, true);
+          xhr.send(null);
+        });
+        await uploadBytes(imagesRef, blob);
       }
-      //const downloadURL = await getDownloadURL(imagesRef);
-      //await updateDoc(recipeRef, { imageURL: downloadURL });
+      const downloadURL = await getDownloadURL(imagesRef);
+      await updateDoc(recipeRef, { imageURL: downloadURL });
+      reset();
+      setImage(null);
       router.push('/home');
     },
     [auth]
   );
-  console.log(recipeError);
+
   const pickImage = async () => {
+    setImageLoading(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
@@ -102,6 +117,9 @@ const Create: React.FC = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0]);
+      setImageLoading(false);
+    } else {
+      setImageLoading(false);
     }
   };
 
@@ -126,7 +144,7 @@ const Create: React.FC = () => {
     <SafeAreaView className="bg-snow h-full">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView className="mt-6 px-4">
-          <Text className="text-2xl font-robobold pl-1">Post a recipe</Text>
+          <Text className="text-2xl font-robobold pl-1">Create a recipe</Text>
           <FormField
             name="title"
             control={control}
@@ -152,8 +170,13 @@ const Create: React.FC = () => {
           <View className="px-1">
             <Text className="text-base font-roboregular pl-2 pb-1 mt-4">Recipe photo</Text>
             <View className="bg-gray w-full h-60 justify-center items-center rounded-xl">
-              <TouchableOpacity onPress={pickImage} className={`${image ? 'w-full h-full' : ''}`}>
-                {image && image.uri ? (
+              <TouchableOpacity
+                onPress={pickImage}
+                className={`${image && !imageLoading ? 'w-full h-full' : ''}`}
+              >
+                {imageLoading ? (
+                  <ActivityIndicator size="small" color="#F9A826" />
+                ) : !imageLoading && image?.uri ? (
                   <Image source={{ uri: image.uri }} className="w-full h-full rounded-xl" />
                 ) : (
                   <Image source={icons.ADD_IMAGE} className="w-6 h-6" tintColor="#9da3af" />
@@ -217,7 +240,7 @@ const Create: React.FC = () => {
             helpText="Select up to 3 categories."
           />
           <CustomButton
-            title="Sign up"
+            title="Post recipe"
             containerStyles="w-full mt-7"
             handlePress={handleSubmit(createRecipeCallback)}
             disabled={Boolean(!isValid || errors.categories)}

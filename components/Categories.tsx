@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity } from 'react-native';
 
 const Categories: React.FC<{ styles?: string }> = ({ styles }) => {
-  const [selected, setSelected] = useState('1');
+  const [selected, setSelected] = useState('all');
   return (
     <FlatList
       data={categories}
