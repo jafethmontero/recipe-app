@@ -26,6 +26,8 @@ interface FormFieldProps {
   multiline?: boolean;
   inputStyles?: string;
   size?: 'sm' | 'md' | 'lg';
+  autoFocus?: boolean;
+  blurOnSubmit?: boolean;
 }
 
 const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {

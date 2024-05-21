@@ -4,13 +4,19 @@ import { router } from 'expo-router';
 import { icons } from '@/constants/icons';
 
 type Item = {
-  title: string;
   id: string;
-  imageUrl: string;
-  likesCount: number;
-  comments: string[];
-  creator: string;
-  cookTime: number;
+  categories: string[];
+  comments: any[];
+  cookTime: string;
+  createdAt: number;
+  createdBy: string;
+  description: string;
+  imageURL: string;
+  ingredients: any[];
+  likes: any[];
+  portion: string;
+  steps: any[];
+  title: string;
 };
 
 interface RecipeCardProps {
@@ -27,27 +33,27 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
       </View>
       <View className="flex-row items-center gap-2 pl-8">
         <Image src="https://picsum.photos/500/300" className="w-6 h-6 rounded-full" resizeMode="cover" />
-        <Text className="font-roboregular text-sm">{item.creator}</Text>
+        <Text className="font-roboregular text-sm">{item.createdBy}</Text>
       </View>
       <TouchableOpacity className="mx-6 mb-6 mt-1" onPress={() => router.push(`/recipe/${item.id}`)}>
         {/*Header section*/}
         <View className="bg-white rounded-xl min-h-[250px] shadow-md">
-          <Image src={item.imageUrl} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
+          <Image src={item.imageURL} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
           <Text className="text-2xl font-robobold px-6 pt-3">{item.title}</Text>
-          <Text className="text-sm font-robothin px-6">Some description of the food...</Text>
+          <Text className="text-sm font-robothin px-6 truncate">{item.description}</Text>
 
           {/*Card controls section*/}
           <View className="flex-row gap-4 px-6 pt-3 items-center">
             <View className="justify-center items-center">
               <TouchableOpacity onPress={() => {}}>
                 <Image
-                  source={item.likesCount > 0 ? icons.FULL_HEART : icons.HEART}
+                  source={item.likes.length > 0 ? icons.FULL_HEART : icons.HEART}
                   className="w-4 h-4"
                   resizeMode="contain"
-                  tintColor={item.likesCount > 0 ? '#d7443e' : '#000'}
+                  tintColor={item.likes.length > 0 ? '#d7443e' : '#000'}
                 />
               </TouchableOpacity>
-              <Text className="text-xs font-robothin">{`${item.likesCount} likes`}</Text>
+              <Text className="text-xs font-robothin">{`${item.likes.length} likes`}</Text>
             </View>
             <View className="justify-center items-center">
               <TouchableOpacity>
@@ -57,7 +63,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
             </View>
             <View className="justify-center items-center">
               <Image source={icons.CLOCK} className="w-4 h-4 mb-1" resizeMode="contain" />
-              <Text className="text-xs font-robothin">{item.cookTime} min</Text>
+              <Text className="text-xs font-robothin">{item.cookTime}</Text>
             </View>
           </View>
 

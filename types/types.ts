@@ -42,3 +42,19 @@ interface User {
 }
 
 export type UserObject = DocumentData | null | undefined | User;
+
+export interface Recipe {
+  categories: string[];
+  comments: any[];
+  cookTime: string;
+  createdAt: number;
+  createdBy: string;
+  description: string;
+  id: string;
+  imageURL: string;
+  ingredients: any[];
+  likes: any[];
+  portion: string;
+  steps: any[];
+  title: string;
+}

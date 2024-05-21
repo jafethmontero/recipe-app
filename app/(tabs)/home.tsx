@@ -8,7 +8,7 @@ import { useFirebaseApi } from '@/hooks/useFirebaseApi';
 import { useStoreContext } from '@/store/StoreProvider';
 import { UserObject } from '@/types/types';
 import { router } from 'expo-router';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -93,8 +93,10 @@ const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | und
 };
 
 const HomeScreen: React.FC = () => {
-  const { authUser } = useStoreContext();
+  const { authUser, refreshCount } = useStoreContext();
   const [userObject, setUserObject] = useState(null);
+  const [recipes, setRecipes] = useState(null);
+
   const [userPending, userError] = useFirebaseApi(
     async () => {
       let userObject = null;
@@ -115,7 +117,22 @@ const HomeScreen: React.FC = () => {
     [authUser]
   );
 
-  if (userPending) {
+  const [recipesPending, recipesError] = useFirebaseApi(
+    async () => {
+      let recipes = null;
+      const recipesSnapshot = await getDocs(query(collection(db, 'recipes'), orderBy('createdAt', 'desc')));
+      recipes = recipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      return recipes;
+    },
+    (recipes) => {
+      if (recipes) {
+        setRecipes(recipes);
+      }
+    },
+    [refreshCount]
+  );
+
+  if (userPending || recipesPending) {
     return (
       <SafeAreaView className="h-full bg-snow">
         <View className="justify-center items-center h-full">
@@ -137,7 +154,7 @@ const HomeScreen: React.FC = () => {
             <Categories styles="mt-2" />
           </View>
         )}
-        data={mockData}
+        data={recipes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <RecipeCard item={item} />}
         ListEmptyComponent={() => (

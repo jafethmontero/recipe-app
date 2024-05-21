@@ -6,11 +6,12 @@ import { categories } from '@/constants/categories';
 import { icons } from '@/constants/icons';
 import { auth, db, storage } from '@/firebaseConfig';
 import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
+import { useStoreContext } from '@/store/StoreProvider';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { addDoc, arrayUnion, collection, doc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   ActivityIndicator,
@@ -58,6 +59,7 @@ const Create: React.FC = () => {
   });
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const { setRefreshCount } = useStoreContext();
   const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
     async (data) => {
       const { title, description, portion, cookTime, ingredients, steps, categories } = data;
@@ -103,6 +105,7 @@ const Create: React.FC = () => {
       await updateDoc(recipeRef, { imageURL: downloadURL });
       reset();
       setImage(null);
+      setRefreshCount((count) => count + 1);
       router.push('/home');
     },
     [auth]
@@ -112,7 +115,6 @@ const Create: React.FC = () => {
     setImageLoading(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true,
     });
 
     if (!result.canceled) {
@@ -154,6 +156,7 @@ const Create: React.FC = () => {
               required: { value: true, message: 'This is a required field' },
             }}
             placeholder="Spaghetti Carbonara"
+            autoFocus={true}
           />
           <FormField
             name="description"
@@ -166,6 +169,7 @@ const Create: React.FC = () => {
             placeholder="A classic Italian pasta dish with eggs, cheese, bacon and black pepper..."
             multiline={true}
             inputStyles="h-32"
+            blurOnSubmit={false}
           />
           <View className="px-1">
             <Text className="text-base font-roboregular pl-2 pb-1 mt-4">Recipe photo</Text>
