@@ -1,6 +1,8 @@
-import { auth } from '@/firebaseConfig';
-import { Recipe } from '@/types/types';
+import { auth, db } from '@/firebaseConfig';
+import { useFirebaseApi } from '@/hooks/useFirebaseApi';
+import { UserObject } from '@/types/types';
 import { onAuthStateChanged, type User } from 'firebase/auth';
+import { DocumentData, collection, getDocs } from 'firebase/firestore';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 interface UserStateProps {
@@ -9,10 +11,10 @@ interface UserStateProps {
   isLoading: boolean;
 }
 
-type RecipesT = Recipe[] | [];
 type StoreContextType = UserStateProps & {
-  refreshCount: number;
-  setRefreshCount: React.Dispatch<React.SetStateAction<number>>;
+  refreshTab: number;
+  setRefreshTab: React.Dispatch<React.SetStateAction<number>>;
+  usersObject: Record<string, UserObject>;
 };
 
 interface StoreProviderProps {
@@ -23,8 +25,9 @@ const initialContext: StoreContextType = {
   authUser: null,
   isAuthenticated: false,
   isLoading: true,
-  refreshCount: 0,
-  setRefreshCount: () => {},
+  refreshTab: 0,
+  setRefreshTab: () => {},
+  usersObject: {},
 };
 
 const StoreContext = React.createContext<StoreContextType>(initialContext);
@@ -32,12 +35,13 @@ const StoreContext = React.createContext<StoreContextType>(initialContext);
 export const useStoreContext = () => useContext(StoreContext);
 
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
+  const [refreshTab, setRefreshTab] = useState<number>(0);
+  const [usersObject, setUsersObject] = useState<Record<string, UserObject>>({});
   const [userState, SetUserState] = useState<UserStateProps>({
     authUser: null,
     isAuthenticated: false,
     isLoading: true,
   });
-  const [refreshCount, setRefreshCount] = useState<number>(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -50,7 +54,30 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const value = useMemo(() => ({ ...userState, refreshCount, setRefreshCount }), [userState, refreshCount]);
+  useFirebaseApi(
+    async () => {
+      const usersSnapshot = await getDocs(collection(db, 'users'));
+      const users = usersSnapshot.docs.reduce(
+        (acc, doc) => {
+          acc[doc.id] = doc.data();
+          return acc;
+        },
+        {} as Record<string, UserObject>
+      );
+      return users;
+    },
+    (users) => {
+      if (users) {
+        setUsersObject(users);
+      }
+    },
+    []
+  );
+
+  const value = useMemo(
+    () => ({ ...userState, refreshTab, setRefreshTab, usersObject }),
+    [userState, refreshTab, usersObject]
+  );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 };

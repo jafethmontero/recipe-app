@@ -93,7 +93,7 @@ const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | und
 };
 
 const HomeScreen: React.FC = () => {
-  const { authUser, refreshCount } = useStoreContext();
+  const { authUser, refreshTab } = useStoreContext();
   const [userObject, setUserObject] = useState(null);
   const [recipes, setRecipes] = useState(null);
 
@@ -129,7 +129,7 @@ const HomeScreen: React.FC = () => {
         setRecipes(recipes);
       }
     },
-    [refreshCount]
+    [refreshTab]
   );
 
   if (userPending || recipesPending) {

@@ -59,7 +59,7 @@ const Create: React.FC = () => {
   });
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
-  const { setRefreshCount } = useStoreContext();
+  const { setRefreshTab } = useStoreContext();
   const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
     async (data) => {
       const { title, description, portion, cookTime, ingredients, steps, categories } = data;
@@ -105,7 +105,7 @@ const Create: React.FC = () => {
       await updateDoc(recipeRef, { imageURL: downloadURL });
       reset();
       setImage(null);
-      setRefreshCount((count) => count + 1);
+      setRefreshTab((count) => count + 1);
       router.push('/home');
     },
     [auth]

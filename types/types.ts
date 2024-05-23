@@ -39,6 +39,7 @@ interface User {
   following: string[];
   recipes: string[];
   createdAt: number;
+  savedRecipes: string[];
 }
 
 export type UserObject = DocumentData | null | undefined | User;
