@@ -93,7 +93,7 @@ const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | und
 };
 
 const HomeScreen: React.FC = () => {
-  const { authUser, refreshTab } = useStoreContext();
+  const { authUser, refreshHomeTab } = useStoreContext();
   const [userObject, setUserObject] = useState(null);
   const [recipes, setRecipes] = useState(null);
 
@@ -129,7 +129,7 @@ const HomeScreen: React.FC = () => {
         setRecipes(recipes);
       }
     },
-    [refreshTab]
+    [refreshHomeTab]
   );
 
   if (userPending || recipesPending) {
@@ -166,6 +166,7 @@ const HomeScreen: React.FC = () => {
               handlePress={() => router.push('/(tabs)/post')}
               containerStyles="w-full mt-7"
             />
+            {recipesError ? <Text className="text-red-500 text-lg mt-4">{recipesError.message}</Text> : null}
           </View>
         )}
       />

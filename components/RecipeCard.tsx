@@ -30,7 +30,6 @@ interface RecipeCardProps {
 const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
   const { usersObject, authUser } = useStoreContext();
   const currentUserObject = authUser ? usersObject[authUser.uid] : {};
-  const creatorUsername = usersObject[item.createdBy]?.username;
 
   const [likesCount, setLikesCount] = useState(item.likes.length);
   const [isLiked, setIsLiked] = useState(item.likes.includes(authUser?.uid));
@@ -70,14 +69,16 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
       </View>
       <View className="flex-row items-center gap-2 pl-8">
         <Image src="https://picsum.photos/500/300" className="w-6 h-6 rounded-full" resizeMode="cover" />
-        <Text className="font-roboregular text-sm">{creatorUsername}</Text>
+        <Text className="font-roboregular text-sm">{usersObject[item.createdBy]?.username}</Text>
       </View>
       <TouchableOpacity className="mx-6 mb-6 mt-1" onPress={() => router.push(`/recipe/${item.id}`)}>
         {/*Header section*/}
         <View className="bg-white rounded-xl min-h-[250px] shadow-md">
           <Image src={item.imageURL} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
           <Text className="text-2xl font-robobold px-5 pt-3">{item.title}</Text>
-          <Text className="text-sm font-robothin px-6 truncate">{item.description}</Text>
+          <Text className="text-sm font-robothin px-6" numberOfLines={2}>
+            {item.description}
+          </Text>
 
           {/*Card controls section*/}
           <View className="flex-row gap-4 px-6 pt-3 items-center">
@@ -93,7 +94,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
               <Text className="text-xs font-robothin">{`${likesCount} likes`}</Text>
             </View>
             <View className="justify-center items-center">
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push(`/recipe/${item.id}?tab=comments`)}>
                 <Image source={icons.CHAT} className="w-4 h-4" resizeMode="contain" />
               </TouchableOpacity>
               <Text className="text-xs font-robothin">({item.comments.length})</Text>

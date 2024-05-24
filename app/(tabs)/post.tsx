@@ -59,7 +59,8 @@ const Create: React.FC = () => {
   });
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
-  const { setRefreshTab } = useStoreContext();
+  const { setRefreshHomeTab } = useStoreContext();
+  const textInputRef = useRef<HTMLInputElement | null>(null);
   const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
     async (data) => {
       const { title, description, portion, cookTime, ingredients, steps, categories } = data;
@@ -105,7 +106,10 @@ const Create: React.FC = () => {
       await updateDoc(recipeRef, { imageURL: downloadURL });
       reset();
       setImage(null);
-      setRefreshTab((count) => count + 1);
+      setRefreshHomeTab((count) => count + 1);
+      if (textInputRef.current) {
+        textInputRef.current.focus();
+      }
       router.push('/home');
     },
     [auth]
@@ -157,19 +161,16 @@ const Create: React.FC = () => {
             }}
             placeholder="Spaghetti Carbonara"
             autoFocus={true}
+            textInputRef={textInputRef}
           />
           <FormField
             name="description"
             control={control}
             label="Description"
             styles="mt-4"
-            rules={{
-              required: { value: true, message: 'This is a required field' },
-            }}
             placeholder="A classic Italian pasta dish with eggs, cheese, bacon and black pepper..."
             multiline={true}
             inputStyles="h-32"
-            blurOnSubmit={false}
           />
           <View className="px-1">
             <Text className="text-base font-roboregular pl-2 pb-1 mt-4">Recipe photo</Text>

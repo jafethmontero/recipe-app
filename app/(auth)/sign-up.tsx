@@ -77,6 +77,7 @@ const SignUp: React.FC = () => {
               maxLength: { value: 50, message: 'Username must be 50 characters or less.' },
               minLength: { value: 3, message: 'Username must contain at least 3 characters.' },
             }}
+            autoCapitalize="none"
           />
           <FormField
             name="email"
@@ -92,6 +93,7 @@ const SignUp: React.FC = () => {
                 message: 'Invalid email address format',
               },
             }}
+            autoCapitalize="none"
           />
           <FormField
             name="password"
@@ -103,6 +105,7 @@ const SignUp: React.FC = () => {
               required: { value: true, message: 'This is a required field' },
               minLength: { value: 8, message: 'Password must be at least 8 characters long.' },
             }}
+            autoCapitalize="none"
           />
           <CustomButton
             title="Sign up"

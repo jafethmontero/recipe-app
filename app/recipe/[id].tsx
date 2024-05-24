@@ -4,10 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 
 const Recipe = () => {
-  const { id } = useLocalSearchParams();
+  const { id, tab } = useLocalSearchParams();
   return (
     <SafeAreaView>
       <Text>Recipe {id}</Text>
+      <Text>Tab {tab}</Text>
     </SafeAreaView>
   );
 };

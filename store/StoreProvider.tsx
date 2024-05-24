@@ -12,8 +12,8 @@ interface UserStateProps {
 }
 
 type StoreContextType = UserStateProps & {
-  refreshTab: number;
-  setRefreshTab: React.Dispatch<React.SetStateAction<number>>;
+  refreshHomeTab: number;
+  setRefreshHomeTab: React.Dispatch<React.SetStateAction<number>>;
   usersObject: Record<string, UserObject>;
 };
 
@@ -25,8 +25,8 @@ const initialContext: StoreContextType = {
   authUser: null,
   isAuthenticated: false,
   isLoading: true,
-  refreshTab: 0,
-  setRefreshTab: () => {},
+  refreshHomeTab: 0,
+  setRefreshHomeTab: () => {},
   usersObject: {},
 };
 
@@ -35,7 +35,7 @@ const StoreContext = React.createContext<StoreContextType>(initialContext);
 export const useStoreContext = () => useContext(StoreContext);
 
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
-  const [refreshTab, setRefreshTab] = useState<number>(0);
+  const [refreshHomeTab, setRefreshHomeTab] = useState<number>(0);
   const [usersObject, setUsersObject] = useState<Record<string, UserObject>>({});
   const [userState, SetUserState] = useState<UserStateProps>({
     authUser: null,
@@ -75,8 +75,8 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   );
 
   const value = useMemo(
-    () => ({ ...userState, refreshTab, setRefreshTab, usersObject }),
-    [userState, refreshTab, usersObject]
+    () => ({ ...userState, refreshHomeTab, setRefreshHomeTab, usersObject }),
+    [userState, refreshHomeTab, usersObject]
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

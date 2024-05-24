@@ -54,6 +54,7 @@ const SignIn: React.FC = () => {
                 message: 'Invalid email address format',
               },
             }}
+            autoCapitalize="none"
           />
           <FormField
             name="password"
@@ -65,6 +66,7 @@ const SignIn: React.FC = () => {
               required: { value: true, message: 'This is a required field' },
               minLength: { value: 8, message: 'Password must be at least 8 characters long.' },
             }}
+            autoCapitalize="none"
           />
           <CustomButton
             title="Login"

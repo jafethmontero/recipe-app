@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { LegacyRef, useState } from 'react';
 import {
   type Control,
   type RegisterOptions,
@@ -28,6 +28,8 @@ interface FormFieldProps {
   size?: 'sm' | 'md' | 'lg';
   autoFocus?: boolean;
   blurOnSubmit?: boolean;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  textInputRef?: any;
 }
 
 const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {
@@ -49,6 +51,8 @@ const FormField: React.FC<FormFieldProps> = (props) => {
     keyboardType,
     inputStyles,
     size = 'lg',
+    autoCapitalize,
+    textInputRef,
   } = props;
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -79,8 +83,9 @@ const FormField: React.FC<FormFieldProps> = (props) => {
                   value={value}
                   textContentType={textContentType}
                   secureTextEntry={textContentType === 'password' ? !showPassword : false}
-                  autoCapitalize="none"
+                  autoCapitalize={autoCapitalize}
                   keyboardType={keyboardType}
+                  ref={textInputRef}
                   {...props}
                 />
                 {textContentType === 'password' ? (
