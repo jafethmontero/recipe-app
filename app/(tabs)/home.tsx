@@ -5,80 +5,40 @@ import SearchInput from '@/components/SearchInput';
 import { icons } from '@/constants/icons';
 import { db } from '@/firebaseConfig';
 import { useFirebaseApi } from '@/hooks/useFirebaseApi';
+import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
 import { useStoreContext } from '@/store/StoreProvider';
-import { UserObject } from '@/types/types';
+import { Recipe, UserObject } from '@/types/types';
 import { router } from 'expo-router';
-import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
+import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+} from 'firebase/firestore';
 import React, { useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const mockData = [
-  {
-    id: '1',
-    title: 'Spaghetti',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 1,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-  {
-    id: '2',
-    title: 'Pizza',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 2,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-  {
-    id: '3',
-    title: 'Burger',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 0,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-  {
-    id: '4',
-    title: 'Pasta',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 4,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-  {
-    id: '5',
-    title: 'Salad',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 0,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-  {
-    id: '6',
-    title: 'Soup',
-    imageUrl: 'https://picsum.photos/500/300',
-    likesCount: 5,
-    comments: [],
-    creator: 'John Doe',
-    cookTime: 30,
-  },
-];
-
-const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | undefined }> = ({
-  user,
-  errorMessage,
-}) => {
+const UserWelcomeBanner: React.FC<{
+  user: UserObject;
+  errorMessage: string | undefined;
+  userPending: boolean;
+}> = ({ user, errorMessage, userPending }) => {
   const username = user?.username ?? 'Unknown user';
   const profilePhoto = user?.profileImageURL ? user.profileImageURL : 'https://picsum.photos/500/300';
 
-  if (errorMessage) {
+  if (!user && errorMessage) {
     return <Text className="text-red-500 text-lg">{errorMessage}</Text>;
+  }
+
+  if (!user && userPending) {
+    return <ActivityIndicator color="#F9A826" size="small" />;
   }
 
   return (
@@ -95,7 +55,8 @@ const UserWelcomeBanner: React.FC<{ user: UserObject; errorMessage: string | und
 const HomeScreen: React.FC = () => {
   const { authUser, refreshHomeTab } = useStoreContext();
   const [userObject, setUserObject] = useState(null);
-  const [recipes, setRecipes] = useState(null);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [nextQuery, setNextQuery] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
   const [userPending, userError] = useFirebaseApi(
     async () => {
@@ -119,10 +80,10 @@ const HomeScreen: React.FC = () => {
 
   const [recipesPending, recipesError] = useFirebaseApi(
     async () => {
-      let recipes = null;
-      const recipesSnapshot = await getDocs(query(collection(db, 'recipes'), orderBy('createdAt', 'desc')));
-      recipes = recipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      return recipes;
+      const firstQuery = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), limit(10));
+      const recipesSnapshot = await getDocs(firstQuery);
+      setNextQuery(recipesSnapshot.docs[recipesSnapshot.docs.length - 1]);
+      return recipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     },
     (recipes) => {
       if (recipes) {
@@ -132,15 +93,17 @@ const HomeScreen: React.FC = () => {
     [refreshHomeTab]
   );
 
-  if (userPending || recipesPending) {
-    return (
-      <SafeAreaView className="h-full bg-snow">
-        <View className="justify-center items-center h-full">
-          <ActivityIndicator color="#F9A826" size="large" />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const [loadMoreRecipesCallback, loadMoreRecipesPending, loadMoreRecipesError] =
+    useFirebaseApiCallback(async () => {
+      if (nextQuery) {
+        const nextRecipesSnapshot = await getDocs(
+          query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), startAfter(nextQuery), limit(10))
+        );
+        setNextQuery(nextRecipesSnapshot.docs[nextRecipesSnapshot.docs.length - 1]);
+        const nextRecipes = nextRecipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setRecipes((prevRecipes) => [...prevRecipes, ...(nextRecipes as Recipe[])]);
+      }
+    }, [nextQuery]);
 
   return (
     <SafeAreaView className="bg-snow h-full">
@@ -148,7 +111,11 @@ const HomeScreen: React.FC = () => {
         ListHeaderComponent={() => (
           <View className="mt-6 px-4 mb-2">
             <View className="flex-row items-center">
-              <UserWelcomeBanner user={userObject} errorMessage={userError?.message} />
+              <UserWelcomeBanner
+                user={userObject}
+                errorMessage={userError?.message}
+                userPending={userPending}
+              />
             </View>
             <SearchInput placeholder="Search for a recipe..." styles="mt-6" />
             <Categories styles="mt-2" />
@@ -157,16 +124,46 @@ const HomeScreen: React.FC = () => {
         data={recipes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <RecipeCard item={item} />}
-        ListEmptyComponent={() => (
-          <View className="flex-1 items-center justify-center mt-20">
-            <Image source={icons.EMPTY_CHEF} className="w-32 h-32" resizeMode="contain" tintColor="#9da3af" />
-            <Text className="text-lg font-robobold mb-4">No recipes found</Text>
-            <CustomButton
-              title="Add new recipe"
-              handlePress={() => router.push('/(tabs)/post')}
-              containerStyles="w-full mt-7"
-            />
-            {recipesError ? <Text className="text-red-500 text-lg mt-4">{recipesError.message}</Text> : null}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        ListEmptyComponent={() => {
+          return recipesPending ? (
+            <SafeAreaView className="h-full bg-snow">
+              <View className="justify-center items-center h-full">
+                <ActivityIndicator color="#F9A826" size="large" />
+              </View>
+            </SafeAreaView>
+          ) : (
+            <View className="flex-1 items-center justify-center mt-20">
+              <Image
+                source={icons.EMPTY_CHEF}
+                className="w-32 h-32"
+                resizeMode="contain"
+                tintColor="#9da3af"
+              />
+              <Text className="text-lg font-robobold mb-4">No recipes found</Text>
+              <CustomButton
+                title="Add new recipe"
+                handlePress={() => router.push('/(tabs)/post')}
+                containerStyles="w-full mt-7"
+              />
+              {recipesError ? (
+                <Text className="text-red-500 text-lg mt-4">{recipesError.message}</Text>
+              ) : null}
+            </View>
+          );
+        }}
+        ListFooterComponent={() => (
+          <View className="justify-center items-center">
+            <View className="justify-center items-center mt-2 bg-cream py-2 rounded-lg w-40">
+              <TouchableOpacity onPress={loadMoreRecipesCallback} disabled={loadMoreRecipesPending}>
+                {loadMoreRecipesPending ? (
+                  <ActivityIndicator size="small" color="#F9A826" />
+                ) : (
+                  <Text className="text-base font-roboregular text-secondary">More recipes...</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />

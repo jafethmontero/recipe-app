@@ -101,9 +101,9 @@ const Create: React.FC = () => {
           xhr.send(null);
         });
         await uploadBytes(imagesRef, blob);
+        const downloadURL = await getDownloadURL(imagesRef);
+        await updateDoc(recipeRef, { imageURL: downloadURL });
       }
-      const downloadURL = await getDownloadURL(imagesRef);
-      await updateDoc(recipeRef, { imageURL: downloadURL });
       reset();
       setImage(null);
       setRefreshHomeTab((count) => count + 1);

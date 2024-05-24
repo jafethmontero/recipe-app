@@ -1,11 +1,14 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { router } from 'expo-router';
 import { icons } from '@/constants/icons';
-import { useStoreContext } from '@/store/StoreProvider';
-import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { useFirebaseApiCallback } from '@/hooks/useFirebaseApiCallback';
+import { useStoreContext } from '@/store/StoreProvider';
+import { router } from 'expo-router';
+import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
+import React, { memo, useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+
+const DEFAULT_IMAGE_URL =
+  'https://firebasestorage.googleapis.com/v0/b/bite-buddies-67fec.appspot.com/o/recipes%2FThe%20Munchies%20-%20Bowl.png?alt=media&token=a1d1ebc6-ff77-4a6a-9153-09b8fe6dda59';
 
 type Recipe = {
   id: string;
@@ -27,7 +30,7 @@ interface RecipeCardProps {
   item: Recipe;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
+const RecipeCard: React.FC<RecipeCardProps> = memo(({ item }) => {
   const { usersObject, authUser } = useStoreContext();
   const currentUserObject = authUser ? usersObject[authUser.uid] : {};
 
@@ -74,7 +77,11 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
       <TouchableOpacity className="mx-6 mb-6 mt-1" onPress={() => router.push(`/recipe/${item.id}`)}>
         {/*Header section*/}
         <View className="bg-white rounded-xl min-h-[250px] shadow-md">
-          <Image src={item.imageURL} className="w-full h-40 rounded-t-xl" resizeMode="cover" />
+          <Image
+            src={item.imageURL ? item.imageURL : DEFAULT_IMAGE_URL}
+            className="w-full h-40 rounded-t-xl"
+            resizeMode="cover"
+          />
           <Text className="text-2xl font-robobold px-5 pt-3">{item.title}</Text>
           <Text className="text-sm font-robothin px-6" numberOfLines={2}>
             {item.description}
@@ -117,6 +124,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ item }) => {
       </TouchableOpacity>
     </View>
   );
-};
+});
 
 export default RecipeCard;

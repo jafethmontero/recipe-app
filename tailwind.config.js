@@ -10,6 +10,7 @@ module.exports = {
         gray: '#f1f2f4',
         snow: '#fbfbfb',
         silver: '#d1d5db',
+        cream: '#fff5e6',
       },
       fontFamily: {
         smregular: ['SpaceMono-Regular', 'sans-serif'],
