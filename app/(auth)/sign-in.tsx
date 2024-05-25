@@ -26,7 +26,7 @@ const SignIn: React.FC = () => {
     },
     mode: 'onBlur',
   });
-  const [signInCallback, userPending, userError] = useFirebaseApiCallback(
+  const [signInCallback, userPending] = useFirebaseApiCallback(
     async (data) => {
       const { email, password } = data;
       await signInWithEmailAndPassword(auth, email, password);
@@ -75,9 +75,6 @@ const SignIn: React.FC = () => {
             disabled={!isValid || userPending}
             loading={userPending}
           />
-          {userError ? (
-            <Text className="text-red-500 text-sm font-robobold mt-2">{userError.message}</Text>
-          ) : null}
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">Don't have an account?</Text>
             <Link href="/sign-up" className="text-secondary font-robobold">

@@ -7,7 +7,7 @@ import { Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Account: React.FC = () => {
-  const [signOutCallback, signOutPending, signOutError] = useFirebaseApiCallback(async () => {
+  const [signOutCallback, signOutPending] = useFirebaseApiCallback(async () => {
     await signOut(auth);
     router.push('/sign-in');
   }, [auth]);
@@ -21,7 +21,6 @@ const Account: React.FC = () => {
         disabled={signOutPending}
         loading={signOutPending}
       />
-      {signOutError && <Text>Error: {signOutError.message}</Text>}
     </SafeAreaView>
   );
 };

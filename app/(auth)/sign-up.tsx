@@ -31,7 +31,7 @@ const SignUp: React.FC = () => {
     mode: 'onBlur',
   });
   const [newUser, setNewUser] = useState<User | null>(null);
-  const [createUserCallback, userPending, userError] = useFirebaseApiCallback(
+  const [createUserCallback, userPending] = useFirebaseApiCallback(
     async (data) => {
       const { username, email, password } = data;
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -114,7 +114,6 @@ const SignUp: React.FC = () => {
             disabled={!isValid || userPending}
             loading={userPending}
           />
-          {userError?.message ? <Text className="text-red-500 text-sm mt-2">{userError.message}</Text> : null}
           <View className="justify-center flex-row gap-2 mt-3">
             <Text className="text-md font-robolight">Have an account already?</Text>
             <Link href="/sign-in" className="text-secondary font-robobold">

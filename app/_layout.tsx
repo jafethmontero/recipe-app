@@ -2,6 +2,7 @@ import { StoreProvider } from '@/store/StoreProvider';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import Toast from 'react-native-toast-message';
 import { useEffect } from 'react';
 
 export {
@@ -61,6 +62,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="recipe/[id]" options={{ headerShown: false }} />
       </Stack>
+      <Toast />
     </StoreProvider>
   );
 }

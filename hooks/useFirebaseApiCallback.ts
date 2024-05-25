@@ -1,6 +1,7 @@
 import { FirebaseError } from 'firebase/app';
 import { useCallback, useDebugValue, useMemo, useState } from 'react';
 import useValueRef from './useValueRef';
+import Toast from 'react-native-toast-message';
 
 type ErrorT = FirebaseError | null;
 
@@ -28,6 +29,12 @@ const useFirebaseApiCallback = (
           setState({ pending: false, error: null });
         } catch (error) {
           if (error instanceof FirebaseError) {
+            Toast.show({
+              type: 'error',
+              text1: 'There was an error',
+              text2: error.message,
+              position: 'bottom',
+            });
             setState({ pending: false, error });
           }
         }

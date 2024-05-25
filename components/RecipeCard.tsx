@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import React, { memo, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const DEFAULT_IMAGE_URL =
   'https://firebasestorage.googleapis.com/v0/b/bite-buddies-67fec.appspot.com/o/recipes%2FThe%20Munchies%20-%20Bowl.png?alt=media&token=a1d1ebc6-ff77-4a6a-9153-09b8fe6dda59';
@@ -55,6 +56,11 @@ const RecipeCard: React.FC<RecipeCardProps> = memo(({ item }) => {
     setIsSaved(!isSaved);
     await updateDoc(userRef, {
       savedRecipes: isSaved ? arrayRemove(item.id) : arrayUnion(item.id),
+    });
+    Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: 'Recipe saved!',
     });
   }, [authUser]);
 

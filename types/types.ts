@@ -58,4 +58,5 @@ export interface Recipe {
   portion: string;
   steps: any[];
   title: string;
+  titleLowerCase?: string;
 }

@@ -61,7 +61,7 @@ const Create: React.FC = () => {
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const { setRefreshHomeTab } = useStoreContext();
   const textInputRef = useRef<HTMLInputElement | null>(null);
-  const [createRecipeCallback, recipeLoading, recipeError] = useFirebaseApiCallback(
+  const [createRecipeCallback, recipeLoading] = useFirebaseApiCallback(
     async (data) => {
       const { title, description, portion, cookTime, ingredients, steps, categories } = data;
       const selectedCategories = Object.entries(categories)
@@ -252,9 +252,6 @@ const Create: React.FC = () => {
             disabled={Boolean(!isValid || errors.categories)}
             loading={recipeLoading}
           />
-          {recipeError?.message ? (
-            <Text className="text-red-500 text-sm mt-2">{recipeError.message}</Text>
-          ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

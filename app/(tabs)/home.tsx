@@ -30,15 +30,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UserWelcomeBanner: React.FC<{
   user: UserObject;
-  errorMessage: string | undefined;
   userPending: boolean;
-}> = ({ user, errorMessage, userPending }) => {
+}> = ({ user, userPending }) => {
   const username = user?.username ?? 'Unknown user';
   const profilePhoto = user?.profileImageURL ? user.profileImageURL : 'https://picsum.photos/500/300';
-
-  if (!user && errorMessage) {
-    return <Text className="text-red-500 text-lg">{errorMessage}</Text>;
-  }
 
   if (!user && userPending) {
     return <ActivityIndicator color="#F9A826" size="small" />;
@@ -62,7 +57,7 @@ const HomeScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [nextDocs, setNextDocs] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
-  const [userPending, userError] = useFirebaseApi(
+  const [userPending] = useFirebaseApi(
     async () => {
       let userObject = null;
       if (authUser) {
@@ -82,7 +77,7 @@ const HomeScreen: React.FC = () => {
     [authUser]
   );
 
-  const [recipesPending, recipesError] = useFirebaseApi(
+  const [recipesPending] = useFirebaseApi(
     async () => {
       let firstQuery = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), limit(10));
       if (selectedCategory !== 'all') {
@@ -105,30 +100,29 @@ const HomeScreen: React.FC = () => {
     [refreshHomeTab, selectedCategory]
   );
 
-  const [loadMoreRecipesCallback, loadMoreRecipesPending, loadMoreRecipesError] =
-    useFirebaseApiCallback(async () => {
-      if (nextDocs) {
-        let nextQuery = query(
+  const [loadMoreRecipesCallback, loadMoreRecipesPending] = useFirebaseApiCallback(async () => {
+    if (nextDocs) {
+      let nextQuery = query(
+        collection(db, 'recipes'),
+        orderBy('createdAt', 'desc'),
+        startAfter(nextDocs),
+        limit(10)
+      );
+      if (selectedCategory !== 'all') {
+        nextQuery = query(
           collection(db, 'recipes'),
+          where('categories', 'array-contains', selectedCategory),
           orderBy('createdAt', 'desc'),
           startAfter(nextDocs),
           limit(10)
         );
-        if (selectedCategory !== 'all') {
-          nextQuery = query(
-            collection(db, 'recipes'),
-            where('categories', 'array-contains', selectedCategory),
-            orderBy('createdAt', 'desc'),
-            startAfter(nextDocs),
-            limit(10)
-          );
-        }
-        const nextRecipesSnapshot = await getDocs(nextQuery);
-        setNextDocs(nextRecipesSnapshot.docs[nextRecipesSnapshot.docs.length - 1]);
-        const nextRecipes = nextRecipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setRecipes((prevRecipes) => [...prevRecipes, ...(nextRecipes as Recipe[])]);
       }
-    }, [nextDocs, selectedCategory]);
+      const nextRecipesSnapshot = await getDocs(nextQuery);
+      setNextDocs(nextRecipesSnapshot.docs[nextRecipesSnapshot.docs.length - 1]);
+      const nextRecipes = nextRecipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setRecipes((prevRecipes) => [...prevRecipes, ...(nextRecipes as Recipe[])]);
+    }
+  }, [nextDocs, selectedCategory]);
 
   return (
     <SafeAreaView className="bg-snow h-full">
@@ -136,11 +130,7 @@ const HomeScreen: React.FC = () => {
         ListHeaderComponent={() => (
           <View className="mt-6 px-4 mb-2">
             <View className="flex-row items-center">
-              <UserWelcomeBanner
-                user={userObject}
-                errorMessage={userError?.message}
-                userPending={userPending}
-              />
+              <UserWelcomeBanner user={userObject} userPending={userPending} />
             </View>
             <SearchInput placeholder="Search for a recipe..." styles="mt-6" />
             <FlatList
@@ -168,7 +158,6 @@ const HomeScreen: React.FC = () => {
               horizontal
               className="mt-2"
             />
-            {recipesError ? <Text className="text-red-500 text-lg mt-4">{recipesError?.message}</Text> : null}
           </View>
         )}
         data={recipes}
@@ -197,9 +186,6 @@ const HomeScreen: React.FC = () => {
                 handlePress={() => router.push('/(tabs)/post')}
                 containerStyles="w-full mt-7"
               />
-              {recipesError ? (
-                <Text className="text-red-500 text-lg mt-4">{recipesError?.message}</Text>
-              ) : null}
             </View>
           );
         }}
@@ -214,9 +200,6 @@ const HomeScreen: React.FC = () => {
                     <Text className="text-base font-roboregular text-secondary">More recipes...</Text>
                   )}
                 </TouchableOpacity>
-                {loadMoreRecipesError ? (
-                  <Text className="text-red-500 text-sm">{loadMoreRecipesError.message}</Text>
-                ) : null}
               </View>
             </View>
           ) : null

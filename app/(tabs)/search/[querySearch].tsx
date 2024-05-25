@@ -28,7 +28,7 @@ const Search: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [nextDocs, setNextDocs] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
-  const [recipesPending, recipesError] = useFirebaseApi(
+  const [recipesPending] = useFirebaseApi(
     async () => {
       let firstQuery = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), limit(10));
       const recipesSnapshot = await getDocs(firstQuery);
