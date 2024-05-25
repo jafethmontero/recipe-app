@@ -70,6 +70,7 @@ const Create: React.FC = () => {
 
       const recipeRef = await addDoc(collection(db, 'recipes'), {
         title,
+        titleLowerCase: title.toLowerCase(),
         description,
         portion,
         cookTime,

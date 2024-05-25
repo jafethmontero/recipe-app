@@ -1,8 +1,8 @@
 export const categories = [
   { id: 'all', label: 'All', iconName: 'ALL' },
-  { id: 'dinner', label: 'Dinner', iconName: 'DINNER' },
-  { id: 'lunch', label: 'Lunch', iconName: 'LUNCH' },
   { id: 'breakfast', label: 'Breakfast', iconName: 'BREAKFAST' },
+  { id: 'lunch', label: 'Lunch', iconName: 'LUNCH' },
+  { id: 'dinner', label: 'Dinner', iconName: 'DINNER' },
   { id: 'dessert', label: 'Dessert', iconName: 'DESSERT' },
   { id: 'vegetarian', label: 'Vegetarian', iconName: 'VEGETARIAN' },
   { id: 'vegan', label: 'Vegan', iconName: 'VEGAN' },

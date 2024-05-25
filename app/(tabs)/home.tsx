@@ -1,7 +1,9 @@
 import Categories from '@/components/Categories';
 import CustomButton from '@/components/CustomButton';
 import RecipeCard from '@/components/RecipeCard';
+import RecipeCardSkeleton from '@/components/RecipeCardSkeleton';
 import SearchInput from '@/components/SearchInput';
+import { categories } from '@/constants/categories';
 import { icons } from '@/constants/icons';
 import { db } from '@/firebaseConfig';
 import { useFirebaseApi } from '@/hooks/useFirebaseApi';
@@ -20,6 +22,7 @@ import {
   orderBy,
   query,
   startAfter,
+  where,
 } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
@@ -56,7 +59,8 @@ const HomeScreen: React.FC = () => {
   const { authUser, refreshHomeTab } = useStoreContext();
   const [userObject, setUserObject] = useState(null);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [nextQuery, setNextQuery] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>>();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [nextDocs, setNextDocs] = useState<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
   const [userPending, userError] = useFirebaseApi(
     async () => {
@@ -80,9 +84,17 @@ const HomeScreen: React.FC = () => {
 
   const [recipesPending, recipesError] = useFirebaseApi(
     async () => {
-      const firstQuery = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), limit(10));
+      let firstQuery = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), limit(10));
+      if (selectedCategory !== 'all') {
+        firstQuery = query(
+          collection(db, 'recipes'),
+          where('categories', 'array-contains', selectedCategory),
+          orderBy('createdAt', 'desc'),
+          limit(10)
+        );
+      }
       const recipesSnapshot = await getDocs(firstQuery);
-      setNextQuery(recipesSnapshot.docs[recipesSnapshot.docs.length - 1]);
+      setNextDocs(recipesSnapshot.docs[recipesSnapshot.docs.length - 1]);
       return recipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     },
     (recipes) => {
@@ -90,20 +102,33 @@ const HomeScreen: React.FC = () => {
         setRecipes(recipes);
       }
     },
-    [refreshHomeTab]
+    [refreshHomeTab, selectedCategory]
   );
 
   const [loadMoreRecipesCallback, loadMoreRecipesPending, loadMoreRecipesError] =
     useFirebaseApiCallback(async () => {
-      if (nextQuery) {
-        const nextRecipesSnapshot = await getDocs(
-          query(collection(db, 'recipes'), orderBy('createdAt', 'desc'), startAfter(nextQuery), limit(10))
+      if (nextDocs) {
+        let nextQuery = query(
+          collection(db, 'recipes'),
+          orderBy('createdAt', 'desc'),
+          startAfter(nextDocs),
+          limit(10)
         );
-        setNextQuery(nextRecipesSnapshot.docs[nextRecipesSnapshot.docs.length - 1]);
+        if (selectedCategory !== 'all') {
+          nextQuery = query(
+            collection(db, 'recipes'),
+            where('categories', 'array-contains', selectedCategory),
+            orderBy('createdAt', 'desc'),
+            startAfter(nextDocs),
+            limit(10)
+          );
+        }
+        const nextRecipesSnapshot = await getDocs(nextQuery);
+        setNextDocs(nextRecipesSnapshot.docs[nextRecipesSnapshot.docs.length - 1]);
         const nextRecipes = nextRecipesSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setRecipes((prevRecipes) => [...prevRecipes, ...(nextRecipes as Recipe[])]);
       }
-    }, [nextQuery]);
+    }, [nextDocs, selectedCategory]);
 
   return (
     <SafeAreaView className="bg-snow h-full">
@@ -118,12 +143,37 @@ const HomeScreen: React.FC = () => {
               />
             </View>
             <SearchInput placeholder="Search for a recipe..." styles="mt-6" />
-            <Categories styles="mt-2" />
+            <FlatList
+              data={categories}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => setSelectedCategory(item.id)}
+                  className="p-4 justify-center items-center gap-2"
+                  disabled={recipesPending}
+                >
+                  <Image
+                    source={icons[item.iconName as keyof typeof icons]}
+                    className="w-5 h-5"
+                    resizeMode="contain"
+                    tintColor={selectedCategory === item.id ? '#F9A826' : '#9da3af'}
+                  />
+                  <Text
+                    className={`font-robobold text-secondary ${selectedCategory !== item.id && 'text-silver font-roboregular'}`}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              horizontal
+              className="mt-2"
+            />
+            {recipesError ? <Text className="text-red-500 text-lg mt-4">{recipesError?.message}</Text> : null}
           </View>
         )}
         data={recipes}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <RecipeCard item={item} />}
+        renderItem={({ item }) => (recipesPending ? <RecipeCardSkeleton /> : <RecipeCard item={item} />)}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         ListEmptyComponent={() => {
@@ -134,7 +184,7 @@ const HomeScreen: React.FC = () => {
               </View>
             </SafeAreaView>
           ) : (
-            <View className="flex-1 items-center justify-center mt-20">
+            <View className="flex-1 items-center justify-center mt-20 px-6">
               <Image
                 source={icons.EMPTY_CHEF}
                 className="w-32 h-32"
@@ -148,24 +198,30 @@ const HomeScreen: React.FC = () => {
                 containerStyles="w-full mt-7"
               />
               {recipesError ? (
-                <Text className="text-red-500 text-lg mt-4">{recipesError.message}</Text>
+                <Text className="text-red-500 text-lg mt-4">{recipesError?.message}</Text>
               ) : null}
             </View>
           );
         }}
-        ListFooterComponent={() => (
-          <View className="justify-center items-center">
-            <View className="justify-center items-center mt-2 bg-cream py-2 rounded-lg w-40">
-              <TouchableOpacity onPress={loadMoreRecipesCallback} disabled={loadMoreRecipesPending}>
-                {loadMoreRecipesPending ? (
-                  <ActivityIndicator size="small" color="#F9A826" />
-                ) : (
-                  <Text className="text-base font-roboregular text-secondary">More recipes...</Text>
-                )}
-              </TouchableOpacity>
+        ListFooterComponent={() =>
+          recipes.length ? (
+            <View className="justify-center items-center">
+              <View className="justify-center items-center mt-2 bg-cream py-2 rounded-lg w-40">
+                <TouchableOpacity onPress={loadMoreRecipesCallback} disabled={loadMoreRecipesPending}>
+                  {loadMoreRecipesPending ? (
+                    <ActivityIndicator size="small" color="#F9A826" />
+                  ) : (
+                    <Text className="text-base font-roboregular text-secondary">More recipes...</Text>
+                  )}
+                </TouchableOpacity>
+                {loadMoreRecipesError ? (
+                  <Text className="text-red-500 text-sm">{loadMoreRecipesError.message}</Text>
+                ) : null}
+              </View>
             </View>
-          </View>
-        )}
+          ) : null
+        }
+        refreshing={recipesPending}
       />
     </SafeAreaView>
   );
