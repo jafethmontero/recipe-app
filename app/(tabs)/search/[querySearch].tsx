@@ -6,19 +6,7 @@ import { db } from '@/firebaseConfig';
 import { useFirebaseApi } from '@/hooks/useFirebaseApi';
 import { Recipe } from '@/types/types';
 import { router, useLocalSearchParams } from 'expo-router';
-import {
-  DocumentData,
-  QueryDocumentSnapshot,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +15,7 @@ const Search: React.FC = () => {
   const { querySearch } = useLocalSearchParams();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const inputRef = useRef<TextInput>(null);
+  const initialQuery = Array.isArray(querySearch) ? querySearch[0] : querySearch;
 
   const [recipesPending] = useFirebaseApi(
     async () => {
@@ -57,7 +46,7 @@ const Search: React.FC = () => {
             <SearchInput
               placeholder="Search for a recipe..."
               styles="mt-3"
-              initialQuery={querySearch as string}
+              initialQuery={initialQuery}
               inputRef={inputRef}
             />
           </View>
