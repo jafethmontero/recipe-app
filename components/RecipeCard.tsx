@@ -37,7 +37,7 @@ const RecipeCard: React.FC<RecipeCardProps> = memo(({ item }) => {
 
   const [likesCount, setLikesCount] = useState(item.likes.length);
   const [isLiked, setIsLiked] = useState(item.likes.includes(authUser?.uid));
-  const [isSaved, setIsSaved] = useState(currentUserObject?.savedRecipes.includes(item.id));
+  const [isSaved, setIsSaved] = useState(currentUserObject?.savedRecipes?.includes(item.id));
 
   const [likeCallback, likeLoading] = useFirebaseApiCallback(async () => {
     const recipeRef = doc(db, 'recipes', item.id);
