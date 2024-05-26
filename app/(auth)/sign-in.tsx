@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 interface SignInFormType {
   email: string;
@@ -30,6 +31,11 @@ const SignIn: React.FC = () => {
     async (data) => {
       const { email, password } = data;
       await signInWithEmailAndPassword(auth, email, password);
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'You have successfully signed in.',
+      });
       router.push('/home');
     },
     [auth]

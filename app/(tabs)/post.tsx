@@ -24,6 +24,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 const Create: React.FC = () => {
   const {
@@ -70,7 +71,7 @@ const Create: React.FC = () => {
 
       const recipeRef = await addDoc(collection(db, 'recipes'), {
         title,
-        titleLowerCase: title.toLowerCase(),
+        titleLowerCase: title.split(' ').map((word: string) => word.toLowerCase()),
         description,
         portion,
         cookTime,
@@ -111,6 +112,11 @@ const Create: React.FC = () => {
       if (textInputRef.current) {
         textInputRef.current.focus();
       }
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Recipe posted!',
+      });
       router.push('/home');
     },
     [auth]

@@ -5,10 +5,16 @@ import { router } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 const Account: React.FC = () => {
   const [signOutCallback, signOutPending] = useFirebaseApiCallback(async () => {
     await signOut(auth);
+    Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: 'You have successfully signed out.',
+    });
     router.push('/sign-in');
   }, [auth]);
 

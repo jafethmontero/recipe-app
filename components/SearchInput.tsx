@@ -1,24 +1,31 @@
 import { icons } from '@/constants/icons';
 import { router, usePathname } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface SearchInputProps {
   placeholder?: string;
   styles?: string;
   initialQuery?: string;
+  inputRef?: any;
 }
 
 const SearchInput: React.FC<SearchInputProps> = (props) => {
-  const { styles, placeholder, initialQuery } = props;
-  const [query, setQuery] = useState(initialQuery ?? '');
+  const { styles, placeholder, initialQuery, inputRef } = props;
+  const [query, setQuery] = useState(initialQuery || '');
   const pathname = usePathname();
   const handleChange = (e: string) => {
     if (!e && pathname.startsWith('/search')) {
-      router.setParams({ query: '' });
+      router.setParams({ querySearch: '' });
     }
     setQuery(e);
   };
+
+  useEffect(() => {
+    if (inputRef?.current && query === '') {
+      inputRef.current.focus();
+    }
+  }, [query]);
 
   return (
     <View
@@ -29,11 +36,12 @@ const SearchInput: React.FC<SearchInputProps> = (props) => {
         className="flex-1 text-base font-roboregular h-full"
         onChangeText={(e) => handleChange(e)}
         value={query}
+        ref={inputRef}
       />
       <TouchableOpacity
         onPress={() => {
           if (pathname.startsWith('/search')) {
-            router.setParams({ query });
+            router.setParams({ querySearch: query });
           } else {
             router.push(`/search/${query}`);
           }
