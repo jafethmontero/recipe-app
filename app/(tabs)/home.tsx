@@ -24,7 +24,7 @@ import {
   startAfter,
   where,
 } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -124,6 +124,13 @@ const HomeScreen: React.FC = () => {
     }
   }, [nextDocs, selectedCategory]);
 
+  const renderRecipeCard = useCallback(
+    ({ item }: { item: Recipe }) => {
+      return recipesPending ? <RecipeCardSkeleton /> : <RecipeCard item={item} />;
+    },
+    [recipesPending]
+  );
+
   return (
     <SafeAreaView className="bg-snow h-full">
       <FlatList
@@ -162,7 +169,7 @@ const HomeScreen: React.FC = () => {
         )}
         data={recipes}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (recipesPending ? <RecipeCardSkeleton /> : <RecipeCard item={item} />)}
+        renderItem={renderRecipeCard}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         ListEmptyComponent={() => {

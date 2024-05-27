@@ -5,7 +5,6 @@ import {
   Controller,
   useFieldArray,
   type Control,
-  type FieldErrors,
   type FieldPath,
   type FieldValues,
   type RegisterOptions,
@@ -29,13 +28,6 @@ interface FormFieldProps {
   size?: 'sm' | 'md' | 'lg';
   fieldName: string;
 }
-
-const getFieldError = (errors: FieldErrors<FieldValues>, name: string): string => {
-  if (errors[name] && typeof errors[name]?.message === 'string') {
-    return String(errors[name]?.message) || 'Field error';
-  }
-  return '';
-};
 
 const ArrayFormField: React.FC<FormFieldProps> = (props) => {
   const {
@@ -75,12 +67,11 @@ const ArrayFormField: React.FC<FormFieldProps> = (props) => {
               >
                 <TextInput
                   placeholder={placeholder}
-                  className="flex-1 text-base font-roboregular h-full"
+                  className="flex-1 text-base font-roboregular h-15 overflow-hidden"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   textContentType={textContentType}
-                  autoCapitalize="none"
                   keyboardType={keyboardType}
                   {...props}
                 />

@@ -46,7 +46,7 @@ const RecipeCard: React.FC<RecipeCardProps> = memo(({ item }) => {
     await updateDoc(recipeRef, {
       likes: isLiked ? arrayRemove(authUser?.uid) : arrayUnion(authUser?.uid),
     });
-  }, [authUser]);
+  }, [authUser, isLiked, item.id]);
 
   const [saveRecipeCallback, saveRecipePending] = useFirebaseApiCallback(async () => {
     if (!authUser) {
@@ -62,7 +62,7 @@ const RecipeCard: React.FC<RecipeCardProps> = memo(({ item }) => {
       text1: 'Success',
       text2: 'Recipe saved!',
     });
-  }, [authUser]);
+  }, [authUser, isSaved, item.id]);
 
   return (
     <View>

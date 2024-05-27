@@ -25,4 +25,5 @@ export const icons = {
   CHAT: require('@/assets/icons/002-chat.png'),
   ADD_IMAGE: require('@/assets/icons/add_image.png'),
   MINUS: require('@/assets/icons/minus.png'),
+  BACK: require('@/assets/icons/back.png'),
 };
